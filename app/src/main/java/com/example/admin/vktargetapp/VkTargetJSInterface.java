@@ -9,7 +9,6 @@ public class VkTargetJSInterface {
 
     public  VkTargetJSInterface(Context context){
         this.context = context;
-
     }
 
     @JavascriptInterface
@@ -18,7 +17,7 @@ public class VkTargetJSInterface {
             return;
         }
 
-        new AlertDialog.Builder(this.context).setTitle("HTML").setMessage(apiKey)
+        new AlertDialog.Builder(this.context).setTitle("api key").setMessage(apiKey)
                 .setPositiveButton(android.R.string.ok, null)
                 .setCancelable(false).create().show();
     }

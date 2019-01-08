@@ -38,6 +38,7 @@ public class CustomWebViewFragment extends WebViewFragment {
                              Bundle savedInstanceState) {
             View result= super.onCreateView(inflater, container, savedInstanceState);
             final WebView webView = getWebView();
+            webView.setVisibility(View.GONE);
             webView.getSettings().setJavaScriptEnabled(true);
             webView.addJavascriptInterface(new VkTargetJSInterface
                     (CustomWebViewFragment.this.getActivity()),"HtmlViewer");

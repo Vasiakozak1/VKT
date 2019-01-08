@@ -20,34 +20,24 @@ public class MainActivity extends AppCompatActivity implements NavigationHost {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Button btn = findViewById(R.id.btn1);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try{
-                    Login();
-                }
-                catch (IOException e){
-                    TextView tw = findViewById(R.id.textView);
-                    tw.setText(e.getMessage());
-                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT);
-                }
-                catch (Exception e) {
-                    TextView tw = findViewById(R.id.textView);
-                    tw.setText(e.getMessage());
-                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT);
-                }
-
+        try{
+            if(UserData.APIKey == null) {
+                Login();
             }
-        });
+            else {
+                //Menu
+            }
+        }
+        catch (IOException e){
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT);
+        }
+        catch (Exception e) {
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT);
+        }
     }
 
     private void Login() throws IOException {
-
-        getFragmentManager()
-                .beginTransaction()
-                .add(R.id.appContainer, new CustomWebViewFragment())
-                .commit();
+        NavigateTo(new LoginFragment(), false);
     }
 
     @Override
