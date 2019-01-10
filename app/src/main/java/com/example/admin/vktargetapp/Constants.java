@@ -1,7 +1,7 @@
 package com.example.admin.vktargetapp;
 
 public class Constants {
-    public final String VkTargetUrl = "https://vktarget.ru/";
-    public final String ApiPageUrl = "api2/";
-    public final String MyTasksUrl = "list/";
+    public static final String VkTargetUrl = "https://vktarget.ru/";
+    public static final String ApiPageUrl = "api2/";
+    public static final String MyTasksUrl = "list/";
 }

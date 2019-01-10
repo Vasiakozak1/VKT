@@ -3,6 +3,7 @@ package com.example.admin.vktargetapp;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.webkit.JavascriptInterface;
+import android.widget.Toast;
 
 public class VkTargetJSInterface {
     private Context context;
@@ -12,7 +13,7 @@ public class VkTargetJSInterface {
     }
 
     @JavascriptInterface
-    public void getApiKey(String apiKey){
+    public void setApiKey(String apiKey){
         if(apiKey == null || apiKey.isEmpty()) {
             return;
         }

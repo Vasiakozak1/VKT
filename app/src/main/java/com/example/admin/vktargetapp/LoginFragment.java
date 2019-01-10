@@ -19,9 +19,6 @@ public class LoginFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
-
-
         final View view = inflater.inflate(R.layout.login_fragment, container, false);
         emailInput = view.findViewById(R.id.emailInput);
         passwordInput = view.findViewById(R.id.passwordInput);
@@ -32,6 +29,7 @@ public class LoginFragment extends Fragment {
             public void onClick(View v) {
                 final String email = emailInput.getText().toString();
                 final String password = passwordInput.getText().toString();
+                VkTargetWebCrawler.getInstance().RetrieveApiKey(email, password);
             }
         });
 
