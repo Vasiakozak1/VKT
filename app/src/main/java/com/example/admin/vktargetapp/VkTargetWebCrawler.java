@@ -17,6 +17,8 @@ public class VkTargetWebCrawler {
     private final String clickLoginBtnCode =
             "document.getElementsByClassName('login')[2].click();";
 
+
+
     private static VkTargetWebCrawler instance = null;
     private WebView webView;
 
@@ -53,5 +55,18 @@ public class VkTargetWebCrawler {
             }
         });
         webView.loadUrl(Constants.VkTargetUrl + Constants.ApiPageUrl);
+    }
+
+    public void RetrieveTasks() {
+        webView.setWebViewClient(new WebViewClient(){
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                webView.loadUrl(
+                        "javascript:HtmlViewer.parseAvailableTasks" +
+                                "(''+document.body.innerHTML+'');");
+            }
+        });
+        webView.loadUrl(Constants.VkTargetUrl + Constants.MyTasksUrl);
     }
 }

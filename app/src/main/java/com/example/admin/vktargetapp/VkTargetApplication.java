@@ -21,7 +21,9 @@ public class VkTargetApplication extends Application {
     public static void setCurrentActivity(Activity activity) {
         VkTargetApplication.currentActivity = activity;
     }
+
     public static Activity getCurrentActivity() {
         return VkTargetApplication.currentActivity;
     }
+    public static NavigationHost getNavigationHost(){ return (NavigationHost) VkTargetApplication.currentActivity; }
 }
