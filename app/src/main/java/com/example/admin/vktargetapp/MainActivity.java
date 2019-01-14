@@ -1,5 +1,6 @@
 package com.example.admin.vktargetapp;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -13,9 +14,14 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.webkit.WebView;
+import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.admin.vktargetapp.com.example.admin.vktargetapp.models.Task;
+
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements NavigationHost {
     private DrawerLayout appNavigationDrawer;
@@ -53,9 +59,6 @@ public class MainActivity extends AppCompatActivity implements NavigationHost {
                 return true;
             }
         });
-
-
-
         try{
             if(UserData.APIKey == null) {
                 Login();
@@ -97,4 +100,12 @@ public class MainActivity extends AppCompatActivity implements NavigationHost {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    public void retrieveTasks() {
+        VkTargetWebCrawler
+                .getInstance()
+                .RetrieveTasks();
+    }
+
+
 }

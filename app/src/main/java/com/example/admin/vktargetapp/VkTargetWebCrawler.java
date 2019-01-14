@@ -25,7 +25,10 @@ public class VkTargetWebCrawler {
     private  VkTargetWebCrawler(){
         webView = MainActivity.WebCrawlerView;
 
+        webView.clearCache(true);
+        webView.clearHistory();
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
         webView.addJavascriptInterface(new VkTargetJSInterface
                 (VkTargetApplication.getCurrentActivity()),"HtmlViewer");
     }
@@ -38,35 +41,50 @@ public class VkTargetWebCrawler {
     }
 
     public void RetrieveApiKey(final String email, final String password) {
-        webView.setWebViewClient(new WebViewClient(){
+        webView.post(new Runnable() {
             @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                webView.loadUrl(
-                        "javascript:(function(){" +
-                                clickSignInBtnCode  +
-                                String.format(enterEmailCode, email) +
-                                String.format(enterPasswordCode, password) +
-                                clickLoginBtnCode +
-                                " }())");
-                webView.loadUrl(
-                        "javascript:HtmlViewer.setApiKey" +
-                                "(''+document.getElementsByClassName('key__value')[0].value+'');");
+            public void run() {
+                webView.setWebViewClient(new WebViewClient(){
+                    @Override
+                    public void onPageFinished(WebView view, String url) {
+                        super.onPageFinished(view, url);
+                        webView.loadUrl(
+                                "javascript:(function(){" +
+                                        clickSignInBtnCode  +
+                                        String.format(enterEmailCode, email) +
+                                        String.format(enterPasswordCode, password) +
+                                        clickLoginBtnCode +
+                                        " }())");
+                        webView.loadUrl(
+                                "javascript:HtmlViewer.setApiKey" +
+                                        "(''+document.getElementsByClassName('key__value')[0].value+'');");
+                    }
+                });
+                webView.loadUrl(Constants.VkTargetUrl + Constants.ApiPageUrl);
             }
         });
-        webView.loadUrl(Constants.VkTargetUrl + Constants.ApiPageUrl);
+
     }
 
     public void RetrieveTasks() {
-        webView.setWebViewClient(new WebViewClient(){
+        webView.post(new Runnable() {
             @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                webView.loadUrl(
-                        "javascript:HtmlViewer.parseAvailableTasks" +
-                                "(''+document.body.innerHTML+'');");
+            public void run() {
+                webView.setWebViewClient(new WebViewClient(){
+                    @Override
+                    public void onPageFinished(WebView view, String url) {
+                        super.onPageFinished(view, url);
+                        webView.loadUrl(
+                                "javascript:setTimeout(" +
+                                        "function(){" +
+                                        "HtmlViewer.parseAvailableTasks" +
+                                        "(''+document.body.innerHTML+'')}" +
+                                        ",1000)");
+                    }
+                });
+                webView.loadUrl(Constants.VkTargetUrl + Constants.MyTasksUrl);
             }
         });
-        webView.loadUrl(Constants.VkTargetUrl + Constants.MyTasksUrl);
+
     }
 }
