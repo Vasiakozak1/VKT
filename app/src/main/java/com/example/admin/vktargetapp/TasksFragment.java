@@ -1,9 +1,8 @@
 package com.example.admin.vktargetapp;
 
-import android.app.AlertDialog;
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ListFragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,7 +12,7 @@ import android.view.ViewGroup;
 import android.support.v4.app.Fragment;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.example.admin.vktargetapp.com.example.admin.vktargetapp.models.Task;
 
@@ -70,17 +69,24 @@ public class TasksFragment extends Fragment {
                     .RetrieveTasks();
         }
         else {
-            RecyclerView tasksList = this.tasksView.findViewById(R.id.tasksCardRecyclerView);
-            tasksList.setHasFixedSize(true);
-            LinearLayoutManager layoutManager = new LinearLayoutManager(this.tasksView.getContext());
-            layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-            tasksList.setLayoutManager(layoutManager);
+            checkMenuItem();
+            TextView noTsksTextView = this.tasksView.findViewById(R.id.noTasksTextView);
+            if(tasks.size() > 0) {
+                noTsksTextView.setVisibility(View.INVISIBLE);
+                RecyclerView tasksList = this.tasksView.findViewById(R.id.tasksCardRecyclerView);
+                tasksList.setHasFixedSize(true);
+                LinearLayoutManager layoutManager = new LinearLayoutManager(this.tasksView.getContext());
+                layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+                tasksList.setLayoutManager(layoutManager);
 
-            TasksRecyclerViewAdapter tasksAdapter = new TasksRecyclerViewAdapter(tasks);
-            tasksList.setAdapter(tasksAdapter);
+                TasksRecyclerViewAdapter tasksAdapter = new TasksRecyclerViewAdapter(tasks);
+                tasksList.setAdapter(tasksAdapter);
+            }
+            else {
+                noTsksTextView.setVisibility(View.VISIBLE);
+            }
             timer.schedule(this.retrieveTasksHandler, 5000);
         }
-
         return this.tasksView;
     }
 
@@ -114,5 +120,13 @@ public class TasksFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    private void checkMenuItem() {
+        NavigationView navigationView = VkTargetApplication.getCurrentActivity()
+                .findViewById(R.id.nav_view);
+        navigationView.getMenu()
+                .findItem(R.id.tasksBtn)
+                .setChecked(true);
     }
 }

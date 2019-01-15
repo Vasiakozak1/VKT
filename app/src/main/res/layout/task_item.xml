@@ -32,7 +32,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:layout_toEndOf="@id/taskDescription"
+            android:layout_marginTop="10dp"
+            android:layout_below="@id/taskDescription"
             android:id="@+id/siteLink"
             android:text="linkWEWEWE"/>
         <android.support.design.chip.Chip

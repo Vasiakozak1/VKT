@@ -60,12 +60,7 @@ public class MainActivity extends AppCompatActivity implements NavigationHost {
             }
         });
         try{
-            if(UserData.APIKey == null) {
-                Login();
-            }
-            else {
-                //Menu
-            }
+            ManageLogin();
         }
         catch (IOException e){
             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT);
@@ -77,6 +72,10 @@ public class MainActivity extends AppCompatActivity implements NavigationHost {
 
     private void Login() throws IOException {
         NavigateTo(new LoginFragment(), false);
+    }
+
+    private void ShowTasks() {
+        NavigateTo(new TasksFragment(), false);
     }
 
     @Override
@@ -107,5 +106,16 @@ public class MainActivity extends AppCompatActivity implements NavigationHost {
                 .RetrieveTasks();
     }
 
-
+    public void ManageLogin() throws IOException {
+        if(Session.NeedsLogin == NeedsLogin.CheckIsNeeded) {
+            VkTargetWebCrawler.getInstance()
+                    .CheckIsLoginNeeded();
+        }
+        else if(Session.NeedsLogin == NeedsLogin.No) {
+            ShowTasks();
+        }
+        else {
+            Login();
+        }
+    }
 }

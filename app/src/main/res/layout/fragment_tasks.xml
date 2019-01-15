@@ -5,10 +5,17 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginTop="55dp">
-    <ListView
-        android:id="@+id/taskListView"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/no_tasks"
+        android:id="@+id/noTasksTextView"
+        android:visibility="invisible"
+        android:textSize="30dp"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:includeFontPadding="false"/>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/tasksCardRecyclerView"
         android:scrollbars="vertical"

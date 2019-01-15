@@ -40,6 +40,24 @@ public class VkTargetWebCrawler {
         return instance;
     }
 
+    public void CheckIsLoginNeeded(){
+        webView.post(new Runnable() {
+            @Override
+            public void run() {
+                webView.setWebViewClient(new WebViewClient(){
+                    @Override
+                    public void onPageFinished(WebView view, String url) {
+                        super.onPageFinished(view, url);
+                        webView.loadUrl(
+                                "javascript:HtmlViewer.setLoginNeeded" +
+                                        "(document.getElementsByClassName('vkt-panel__user-email').length);");
+                    }
+                });
+                webView.loadUrl(Constants.VkTargetUrl);
+            }
+        });
+    }
+
     public void RetrieveApiKey(final String email, final String password) {
         webView.post(new Runnable() {
             @Override

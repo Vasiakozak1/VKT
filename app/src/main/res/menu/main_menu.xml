@@ -4,7 +4,20 @@
         <item
             android:id="@+id/tasksBtn"
             android:icon="@drawable/card_bulleted_outline"
-            android:title="Задания">
+            android:title="Завдання">
+        </item>
+        <item
+            android:id="@+id/doneTasks"
+            android:icon="@drawable/ic_check_black_24dp"
+            android:title="Виконані завдання">
+        </item>
+    </group>
+    <group>
+        <item
+            android:id="@+id/logoutBtn"
+            android:icon="@drawable/ic_assignment_return_black_24dp"
+            android:title="Вийти">
+
         </item>
     </group>
 </menu>
