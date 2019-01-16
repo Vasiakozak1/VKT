@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:text="@string/no_tasks"
         android:id="@+id/noTasksTextView"
-        android:visibility="gone"
+        android:visibility="invisible"
         android:textSize="30dp"
         android:textAlignment="center"
         android:gravity="center"

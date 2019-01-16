@@ -63,6 +63,8 @@ public class TasksFragment extends Fragment {
                              Bundle savedInstanceState) {
         this.tasksView = inflater.inflate(R.layout.fragment_tasks, container, false);
         VkTargetApplication.setCurrentFragment(this);
+        TextView noTsksTextView = this.tasksView.findViewById(R.id.noTasksTextView);
+        noTsksTextView.setVisibility(View.VISIBLE);
         if(tasks == null) {
             VkTargetWebCrawler
                     .getInstance()
@@ -70,7 +72,6 @@ public class TasksFragment extends Fragment {
         }
         else {
             checkMenuItem();
-            TextView noTsksTextView = this.tasksView.findViewById(R.id.noTasksTextView);
             if(tasks.size() > 0) {
                 noTsksTextView.setVisibility(View.INVISIBLE);
                 RecyclerView tasksList = this.tasksView.findViewById(R.id.tasksCardRecyclerView);
@@ -83,7 +84,7 @@ public class TasksFragment extends Fragment {
                 tasksList.setAdapter(tasksAdapter);
             }
             else {
-                noTsksTextView.setVisibility(View.GONE);
+                noTsksTextView.setVisibility(View.VISIBLE);
             }
             timer.schedule(this.retrieveTasksHandler, 5000);
         }

@@ -54,7 +54,7 @@ public class FinishedTasksFragment extends Fragment {
             }
             else
             {
-                noTasksTextView.setVisibility(View.GONE);
+                noTasksTextView.setVisibility(View.VISIBLE);
             }
         }
         return view;
