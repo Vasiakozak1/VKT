@@ -17,7 +17,6 @@
             android:id="@+id/logoutBtn"
             android:icon="@drawable/ic_assignment_return_black_24dp"
             android:title="Вийти">
-
         </item>
     </group>
 </menu>

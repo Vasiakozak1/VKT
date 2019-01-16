@@ -1,27 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="5dp">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="5dp">
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/no_tasks"
-        android:id="@+id/noTasksTextView"
+        android:id="@+id/noFinishedTasksTextView"
         android:visibility="gone"
         android:textSize="30dp"
         android:textAlignment="center"
         android:gravity="center"
         android:includeFontPadding="false"/>
-
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/tasksCardRecyclerView"
+        android:id="@+id/finishedtasksCardRecyclerView"
         android:scrollbars="vertical"
         android:layout_marginTop="-70dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
     </android.support.v7.widget.RecyclerView>
-    </LinearLayout>
+</LinearLayout>

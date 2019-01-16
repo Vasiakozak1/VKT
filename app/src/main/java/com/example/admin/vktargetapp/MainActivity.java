@@ -2,6 +2,7 @@ package com.example.admin.vktargetapp;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -12,9 +13,12 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.AttributeSet;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.WebView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.admin.vktargetapp.com.example.admin.vktargetapp.models.Task;
@@ -24,9 +28,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements NavigationHost {
+    public SharedPreferences preferences;
     private DrawerLayout appNavigationDrawer;
     private NavigationView appNavigationView;
     private Toolbar appToolbar;
+    private Session session;
+    private TextView userEmailView;
 
     public static WebView WebCrawlerView;
 
@@ -34,11 +41,19 @@ public class MainActivity extends AppCompatActivity implements NavigationHost {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         WebCrawlerView = findViewById(R.id.webCrawlerView);
         VkTargetApplication.setCurrentActivity(this);
         appNavigationDrawer = findViewById(R.id.drawer_layout);
         appNavigationView = findViewById(R.id.nav_view);
         appToolbar = findViewById(R.id.main_toolbar);
+        preferences = getSharedPreferences(Constants.PREFERENCES_NAME, MODE_PRIVATE);
+        View navigation = appNavigationView.getHeaderView(0);
+        userEmailView = navigation.findViewById(R.id.userEmail);
+        String currentUserEmail = preferences.getString("email", "");
+        userEmailView.setText(currentUserEmail != null ? currentUserEmail : "");
+       // session = new Session(getApplicationContext());
+
 
         setSupportActionBar(appToolbar);
         final ActionBar actionBar = getSupportActionBar();
@@ -48,13 +63,20 @@ public class MainActivity extends AppCompatActivity implements NavigationHost {
         appNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                // set item as selected to persist highlight
                 menuItem.setChecked(true);
-                // close drawer when item is tapped
+                int menuItemId = menuItem.getItemId();
+                switch (menuItemId) {
+                    case R.id.logoutBtn:
+                        LogOut();
+                        break;
+                    case R.id.tasksBtn:
+                        ShowTasks();
+                        break;
+                    case R.id.doneTasks:
+                        ShowFinishedTasks();
+                        break;
+                }
                 appNavigationDrawer.closeDrawers();
-
-                // Add code here to update the UI based on the item selected
-                // For example, swap UI fragments here
 
                 return true;
             }
@@ -74,8 +96,20 @@ public class MainActivity extends AppCompatActivity implements NavigationHost {
         NavigateTo(new LoginFragment(), false);
     }
 
+    private void LogOut() {
+        VkTargetWebCrawler
+                .getInstance()
+                .LogOut();
+        TextView emailInHeader = findViewById(R.id.userEmail);
+        emailInHeader.setText("");
+        NavigateTo(new LoginFragment(), false);
+    }
+
     private void ShowTasks() {
         NavigateTo(new TasksFragment(), false);
+    }
+    private void ShowFinishedTasks() {
+        NavigateTo(new FinishedTasksFragment(), false);
     }
 
     @Override
@@ -112,6 +146,10 @@ public class MainActivity extends AppCompatActivity implements NavigationHost {
                     .CheckIsLoginNeeded();
         }
         else if(Session.NeedsLogin == NeedsLogin.No) {
+           // String currentEmail = session.getCurrentEmail();
+          //  if(currentEmail != null && !currentEmail.equals("")){
+         //       userEmailView.setText(currentEmail);
+         //   }
             ShowTasks();
         }
         else {

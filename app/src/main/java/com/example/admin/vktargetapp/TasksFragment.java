@@ -83,7 +83,7 @@ public class TasksFragment extends Fragment {
                 tasksList.setAdapter(tasksAdapter);
             }
             else {
-                noTsksTextView.setVisibility(View.VISIBLE);
+                noTsksTextView.setVisibility(View.GONE);
             }
             timer.schedule(this.retrieveTasksHandler, 5000);
         }

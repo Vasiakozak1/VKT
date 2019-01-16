@@ -71,8 +71,6 @@ public class TaskBuilder {
     }
 
     public TaskBuilder addFInishDate() {
-        Element taskDataElement = taskElement.getElementsByClass(taskItemDataClass)
-                .first();
         Element finishedDateElement = taskElement.selectFirst("div[data-bind='date']");
         this.finishingDate = finishedDateElement.text();
         return this;

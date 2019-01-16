@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.webkit.JavascriptInterface;
 import android.widget.Toast;
 
+import com.example.admin.vktargetapp.com.example.admin.vktargetapp.models.FinishedTask;
 import com.example.admin.vktargetapp.com.example.admin.vktargetapp.models.Task;
 
 import org.jsoup.Jsoup;
@@ -66,7 +67,6 @@ public class VkTargetJSInterface {
                         mainActivity.ManageLogin();
                     }
                 }catch (IOException e) {
-
                 }
             }
         });
@@ -75,18 +75,24 @@ public class VkTargetJSInterface {
 
     @JavascriptInterface
     public void parseAvailableTasks(String tasksHTMLPage) {
-        Document tasksDocument = Jsoup.parse(tasksHTMLPage);
+        Elements tasksElements = getTasksElements(tasksHTMLPage);
+        List<Task> availableTasks = retrieveTasksFromElements(tasksElements);
+        this.navigationHost.NavigateTo(new TasksFragment(availableTasks), false);
+    }
+
+    @JavascriptInterface
+    public void parseDoneTasks(String tasksHTMLPage) {
+        Elements tasksElements = getTasksElements(tasksHTMLPage);
+        List<FinishedTask> finishedTasks = retrieveFinishedTasksFromElements(tasksElements);
+        this.navigationHost.NavigateTo(new FinishedTasksFragment(finishedTasks), false);
+    }
+
+    private Elements getTasksElements(String tasksHtmlPage) {
+        Document tasksDocument = Jsoup.parse(tasksHtmlPage);
         Element superfluousTip = tasksDocument.getElementById(tipElementId);
         Elements tasksElements = tasksDocument.getElementsByClass(taskItemClass);
         tasksElements.remove(superfluousTip);
-        List<Task> availaleTasks = retrieveTasksFromElements(tasksElements);
-        TasksFragment tasksFragment =(TasksFragment) VkTargetApplication.getCurrentFragment();
-        if(tasksFragment != null) {
-            this.navigationHost.NavigateTo(new TasksFragment(availaleTasks), false);
-        }
-        else {
-            //TODO: handle this case
-        }
+        return tasksElements;
     }
 
     private List<Task> retrieveTasksFromElements(Elements tasks) {
@@ -99,7 +105,19 @@ public class VkTargetJSInterface {
                     .BuildTask();
             tasksList.add(buildedTask);
         }
-
+        return tasksList;
+    }
+    private List<FinishedTask> retrieveFinishedTasksFromElements(Elements tasks) {
+        List<FinishedTask> tasksList = new ArrayList<FinishedTask>();
+        TaskBuilder taskBuilder;
+        for(Element task : tasks) {
+            taskBuilder = new TaskBuilder(task);
+            FinishedTask buildedTask = taskBuilder.addTaskIconResuourceId()
+                    .addDescription()
+                    .addFInishDate()
+                    .BuildFinishedTask();
+            tasksList.add(buildedTask);
+        }
         return tasksList;
     }
 }

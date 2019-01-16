@@ -11,14 +11,10 @@ public class Session {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
-    public void setEmailAndPassword(String email, String password) {
+    public void setEmail(String email) {
         sharedPreferences.edit().putString("email", email).commit();
-        sharedPreferences.edit().putString("password", password).commit();
     }
     public String getCurrentEmail() {
         return sharedPreferences.getString("email", "");
-    }
-    public String getCurrentPassword() {
-        return sharedPreferences.getString("password", "");
     }
 }

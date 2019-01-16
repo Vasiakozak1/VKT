@@ -16,8 +16,10 @@ public class VkTargetWebCrawler {
             "document.getElementsByName('password')[0].value='%s';";
     private final String clickLoginBtnCode =
             "document.getElementsByClassName('login')[2].click();";
+    private final String clickShowFinishedTasksButtonCode =
+            "document.getElementsByClassName('good')[%d].click()";
 
-
+    private final int finishedTasksButtonIndex = 1;
 
     private static VkTargetWebCrawler instance = null;
     private WebView webView;
@@ -97,12 +99,55 @@ public class VkTargetWebCrawler {
                                         "function(){" +
                                         "HtmlViewer.parseAvailableTasks" +
                                         "(''+document.body.innerHTML+'')}" +
-                                        ",1000)");
+                                        ",500)");
                     }
                 });
                 webView.loadUrl(Constants.VkTargetUrl + Constants.MyTasksUrl);
             }
         });
 
+    }
+
+    public void RetrieveFinishedTasks() {
+        webView.post(new Runnable() {
+            @Override
+            public void run() {
+                webView.setWebViewClient(new WebViewClient(){
+                    @Override
+                    public void onPageFinished(WebView view, String url) {
+                        super.onPageFinished(view, url);
+                        webView.loadUrl(
+                                String.format("javascript: " + clickShowFinishedTasksButtonCode, finishedTasksButtonIndex)
+                        );
+                        webView.loadUrl(
+                                "javascript:setTimeout(" +
+                                        "function(){" +
+                                        "HtmlViewer.parseDoneTasks" +
+                                        "(''+document.body.innerHTML+'')}" +
+                                        ",500)"
+                        );
+                    }
+                });
+                webView.loadUrl(Constants.VkTargetUrl + Constants.MyTasksUrl);
+            }
+        });
+    }
+
+    public void LogOut() {
+        webView.post(new Runnable() {
+            @Override
+            public void run() {
+                webView.setWebViewClient(new WebViewClient(){
+                    @Override
+                    public void onPageFinished(WebView view, String url) {
+                        super.onPageFinished(view, url);
+                        webView.loadUrl(
+                                "javascript: document.getElementsByClassName('vkt-panel__user-logout left')[1].click()"
+                        );
+                    }
+                });
+                webView.loadUrl(Constants.VkTargetUrl);
+            }
+        });
     }
 }
