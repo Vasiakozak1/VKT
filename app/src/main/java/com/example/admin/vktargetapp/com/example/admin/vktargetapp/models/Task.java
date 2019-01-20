@@ -6,6 +6,7 @@ public class Task {
     public double Price;
     public String LinkUrl;
     public String LinkText;
+    public int Type;
 
     public Task(){
     }

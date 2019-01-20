@@ -58,7 +58,7 @@ public class TaskBuilder {
         Element taskDataElement = taskElement.getElementsByClass(taskItemDataClass)
                 .first();
         Element taskInfoElement = taskElement.select("p").first();
-        this.taskDescription = new String(taskInfoElement.text());
+        this.taskDescription = new String(taskInfoElement.ownText());
         Element linkElement = taskInfoElement.selectFirst("a[data-bind='url']");
         this.taskLinkText = linkElement.text();
         this.taskLinkUrl = linkElement.attr("href");

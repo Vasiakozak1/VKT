@@ -141,7 +141,12 @@ public class MainActivity extends AppCompatActivity implements NavigationHost {
     }
 
     public void ManageLogin() throws IOException {
-        if(Session.NeedsLogin == NeedsLogin.CheckIsNeeded) {
+        String apiKey = VkTargetApplication.getApiKey();
+        if(Session.NeedsLogin == NeedsLogin.Yes
+                || apiKey.equals("")) {
+            Login();
+        }
+        else if(Session.NeedsLogin == NeedsLogin.CheckIsNeeded) {
             VkTargetWebCrawler.getInstance()
                     .CheckIsLoginNeeded();
         }
@@ -151,9 +156,6 @@ public class MainActivity extends AppCompatActivity implements NavigationHost {
          //       userEmailView.setText(currentEmail);
          //   }
             ShowTasks();
-        }
-        else {
-            Login();
         }
     }
 }

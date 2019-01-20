@@ -36,17 +36,36 @@ public class VkTargetJSInterface {
     }
 
     @JavascriptInterface
-    public void setApiKey(String apiKey){
+    public void setApiKey(int countOfLoggedInElements, String apiKey){
+      //  if(countOfLoggedInElements == COUNT_OF_NOT_LOGGED_IN_USER_ELEMENTS) {
+      //      LoginFragment loginFragment =(LoginFragment) VkTargetApplication.getCurrentFragment();
+      //      loginFragment.ShowWrongCredentialsMessage(1);
+     //   }
+    //    else {
+     //       LoginFragment loginFragment =(LoginFragment) VkTargetApplication.getCurrentFragment();
+   //         loginFragment.ShowWrongCredentialsMessage(2);
+   //     }
         if(apiKey == null || apiKey.isEmpty()) {
             return;
         }
-        UserData.APIKey = apiKey;
-
-       // MainActivity mainActivity =(MainActivity) VkTargetApplication.getCurrentActivity();
-      //  if(mainActivity != null) {
-     //       mainActivity.retrieveTasks();
-     //   }
+        AlertDialog.Builder builder = new AlertDialog.Builder(VkTargetApplication.getCurrentActivity());
+        builder.setMessage("key:" + apiKey);
+        builder.show();
+        VkTargetApplication.setApiKey(apiKey);
         this.navigationHost.NavigateTo(new TasksFragment(), false);
+    }
+
+    @JavascriptInterface
+    public void checkIsCredentialsRight(int countOfLoggedInElements) {
+        if(countOfLoggedInElements == COUNT_OF_NOT_LOGGED_IN_USER_ELEMENTS) {
+            LoginFragment loginFragment =(LoginFragment) VkTargetApplication.getCurrentFragment();
+            loginFragment.ShowWrongCredentialsMessage(1);
+        }
+        else {
+            LoginFragment loginFragment =(LoginFragment) VkTargetApplication.getCurrentFragment();
+            loginFragment.ShowWrongCredentialsMessage(2);
+        }
+
     }
 
     @JavascriptInterface
@@ -77,6 +96,11 @@ public class VkTargetJSInterface {
     public void parseAvailableTasks(String tasksHTMLPage) {
         Elements tasksElements = getTasksElements(tasksHTMLPage);
         List<Task> availableTasks = retrieveTasksFromElements(tasksElements);
+        TasksTypeMapper mapper = TasksTypeMapper
+                .getInstance();
+        for(Task taskToGetType: availableTasks) {
+            taskToGetType.Type = mapper.MapTaskType(taskToGetType);
+        }
         this.navigationHost.NavigateTo(new TasksFragment(availableTasks), false);
     }
 

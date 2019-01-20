@@ -1,0 +1,24 @@
+{
+  "tasksDescriptionAccordances": [
+    {
+      "availableTaskDescription": "Вступите в сообщество",
+      "taskTypeDescription": "Вступление в сообщество"
+    },
+    {
+      "availableTaskDescription": "Поставьте 'Лайк'",
+      "taskTypeDescription": "Поставить лайк"
+    },
+    {
+      "availableTaskDescription": "Поставьте лайк на странице",
+      "taskTypeDescription": "Поставить лайк"
+    },
+    {
+      "availableTaskDescription": "Нажмите поделиться записью",
+      "taskTypeDescription": "Рассказать друзьям"
+    },
+    {
+      "availableTaskDescription": "Добавить в друзья",
+      "taskTypeDescription": "Добавить в друзья"
+    }
+  ]
+}

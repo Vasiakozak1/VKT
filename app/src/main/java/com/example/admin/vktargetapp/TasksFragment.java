@@ -24,6 +24,7 @@ public class TasksFragment extends Fragment {
     private Timer timer;
     private TimerTask retrieveTasksHandler;
     private View tasksView;
+    private TasksTypeMapper tasksTypeMapper;
 
     private OnFragmentInteractionListener mListener;
     private List<Task> tasks;
@@ -63,6 +64,7 @@ public class TasksFragment extends Fragment {
                              Bundle savedInstanceState) {
         this.tasksView = inflater.inflate(R.layout.fragment_tasks, container, false);
         VkTargetApplication.setCurrentFragment(this);
+        tasksTypeMapper = TasksTypeMapper.getInstance();
         TextView noTsksTextView = this.tasksView.findViewById(R.id.noTasksTextView);
         noTsksTextView.setVisibility(View.VISIBLE);
         if(tasks == null) {
@@ -86,7 +88,7 @@ public class TasksFragment extends Fragment {
             else {
                 noTsksTextView.setVisibility(View.VISIBLE);
             }
-            timer.schedule(this.retrieveTasksHandler, 5000);
+            timer.schedule(this.retrieveTasksHandler, 10000);
         }
         return this.tasksView;
     }

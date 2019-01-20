@@ -18,6 +18,9 @@ public class VkTargetWebCrawler {
             "document.getElementsByClassName('login')[2].click();";
     private final String clickShowFinishedTasksButtonCode =
             "document.getElementsByClassName('good')[%d].click()";
+    private final String retrieveApiKeyFunctionParameters =
+            "" +
+                    "";
 
     private final int finishedTasksButtonIndex = 1;
 
@@ -76,14 +79,13 @@ public class VkTargetWebCrawler {
                                         clickLoginBtnCode +
                                         " }())");
                         webView.loadUrl(
-                                "javascript:HtmlViewer.setApiKey" +
-                                        "(''+document.getElementsByClassName('key__value')[0].value+'');");
+                                "javascript:setTimeout(" +
+                                        "function(){ HtmlViewer.setApiKey(document.getElementsByClassName('vkt-panel__user-data').length, ''+document.getElementsByClassName('key__value')[0].value+'') },400)");
                     }
                 });
                 webView.loadUrl(Constants.VkTargetUrl + Constants.ApiPageUrl);
             }
         });
-
     }
 
     public void RetrieveTasks() {

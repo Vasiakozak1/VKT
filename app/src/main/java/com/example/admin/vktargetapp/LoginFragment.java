@@ -1,5 +1,6 @@
 package com.example.admin.vktargetapp;
 
+import android.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,8 +12,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 public class LoginFragment extends Fragment {
 
@@ -20,24 +24,31 @@ public class LoginFragment extends Fragment {
     TextInputEditText passwordInput;
     Session session;
     TextView userEmailInHeader;
+    TextView errorMessageView;
     MainActivity mainActivity;
+    View view;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.login_fragment, container, false);
+        this.view = view;
         emailInput = view.findViewById(R.id.emailInput);
         passwordInput = view.findViewById(R.id.passwordInput);
-        mainActivity = (MainActivity) VkTargetApplication
-                                        .getCurrentActivity();
-        userEmailInHeader = mainActivity
-                            .findViewById(R.id.userEmail);
+
+        errorMessageView = view.findViewById(R.id.errorMessage);
+        VkTargetApplication.setCurrentFragment(this);
        // session = new Session(VkTargetApplication.getAppContext());
 
         final Button loginButton = view.findViewById(R.id.login_button);
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mainActivity = (MainActivity) VkTargetApplication
+                        .getCurrentActivity();
+                userEmailInHeader = mainActivity
+                        .findViewById(R.id.userEmail);
+
                 final String email = emailInput.getText().toString();
                 final String password = passwordInput.getText().toString();
                 userEmailInHeader.setText(email);
@@ -50,5 +61,17 @@ public class LoginFragment extends Fragment {
         });
 
         return view;
+    }
+
+    public void ShowWrongCredentialsMessage(int number) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(VkTargetApplication.getCurrentActivity());
+        builder.setMessage("show wrong creds" + number)
+                .show();
+        this.errorMessageView.setWidth(250);
+        this.errorMessageView.setHeight(80);
+    }
+    private void hideErrorMEssage(){
+        this.errorMessageView.setWidth(0);
+        this.errorMessageView.setHeight(0);
     }
 }

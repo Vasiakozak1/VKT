@@ -59,6 +59,7 @@ public class TasksRecyclerViewAdapter  extends RecyclerView.Adapter<TasksRecycle
         taskViewHolder.link.setMovementMethod(LinkMovementMethod.getInstance());
         taskViewHolder.price.setText(String.valueOf(currentTask.Price) + " за виконання");
         taskViewHolder.price.setChipIconResource(R.drawable.currency_rub);
+        taskViewHolder.type.setText("Тип: " + currentTask.Type);
     }
 
     @NonNull
@@ -77,6 +78,7 @@ public class TasksRecyclerViewAdapter  extends RecyclerView.Adapter<TasksRecycle
         protected TextView link;
         protected Chip price;
         protected TextView finishDate;
+        protected TextView type;
 
         public TaskViewHolder(View view) {
             super(view);
@@ -85,6 +87,7 @@ public class TasksRecyclerViewAdapter  extends RecyclerView.Adapter<TasksRecycle
             link = view.findViewById(R.id.siteLink);
             price = view.findViewById(R.id.taskPrice);
             finishDate = view.findViewById(R.id.taskFinishDate);
+            type = view.findViewById(R.id.taskType);
         }
     }
 }

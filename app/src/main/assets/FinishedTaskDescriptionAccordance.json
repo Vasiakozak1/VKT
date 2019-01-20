@@ -1,0 +1,15 @@
+{
+  "tasksDescriptionAccordances": [
+    {
+      "finishedTaskDescription": "Поставить 'Лайк'",
+      "taskTypeDescription": "Поставить лайк"
+    },
+    {
+      "finishedTaskDescription": "Вступить в сообщество",
+      "taskTypeDescription": "Вступление в сообщество"
+    },
+    {
+      "finishedTaskDescription": ""
+    }
+  ]
+}
