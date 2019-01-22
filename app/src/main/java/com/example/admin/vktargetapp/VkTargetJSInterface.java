@@ -29,6 +29,7 @@ public class VkTargetJSInterface {
 
     private Context context;
     private NavigationHost navigationHost;
+    private int setApiKeyTriggerCount = 0;
 
     public  VkTargetJSInterface(Context context){
         this.context = context;
@@ -36,34 +37,40 @@ public class VkTargetJSInterface {
     }
 
     @JavascriptInterface
-    public void setApiKey(int countOfLoggedInElements, String apiKey){
-      //  if(countOfLoggedInElements == COUNT_OF_NOT_LOGGED_IN_USER_ELEMENTS) {
-      //      LoginFragment loginFragment =(LoginFragment) VkTargetApplication.getCurrentFragment();
-      //      loginFragment.ShowWrongCredentialsMessage(1);
-     //   }
-    //    else {
-     //       LoginFragment loginFragment =(LoginFragment) VkTargetApplication.getCurrentFragment();
-   //         loginFragment.ShowWrongCredentialsMessage(2);
-   //     }
-        if(apiKey == null || apiKey.isEmpty()) {
-            return;
-        }
-        AlertDialog.Builder builder = new AlertDialog.Builder(VkTargetApplication.getCurrentActivity());
-        builder.setMessage("key:" + apiKey);
-        builder.show();
-        VkTargetApplication.setApiKey(apiKey);
-        this.navigationHost.NavigateTo(new TasksFragment(), false);
+    public void setApiKey(final int countOfLoggedInElements,final String apiKey){
+        // This method runs two times instead of one
+        setApiKeyTriggerCount++;
+        VkTargetApplication.getCurrentActivity()
+                .runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(countOfLoggedInElements == COUNT_OF_NOT_LOGGED_IN_USER_ELEMENTS) {
+                            LoginFragment loginFragment =(LoginFragment) VkTargetApplication.getCurrentFragment();
+                            loginFragment.ShowWrongCredentialsMessage();
+                        }
+
+                        if(apiKey == null || apiKey.isEmpty()) {
+                            VkTargetApplication.setLoaded();
+                            return;
+                        }
+                        VkTargetApplication.enableNavigationMenu();
+                        VkTargetApplication.setApiKey(apiKey);
+                        navigationHost.NavigateTo(new TasksFragment(), false);
+
+                    }
+                });
+
     }
 
     @JavascriptInterface
     public void checkIsCredentialsRight(int countOfLoggedInElements) {
         if(countOfLoggedInElements == COUNT_OF_NOT_LOGGED_IN_USER_ELEMENTS) {
             LoginFragment loginFragment =(LoginFragment) VkTargetApplication.getCurrentFragment();
-            loginFragment.ShowWrongCredentialsMessage(1);
+            loginFragment.ShowWrongCredentialsMessage();
         }
         else {
             LoginFragment loginFragment =(LoginFragment) VkTargetApplication.getCurrentFragment();
-            loginFragment.ShowWrongCredentialsMessage(2);
+            loginFragment.ShowWrongCredentialsMessage();
         }
 
     }
@@ -96,18 +103,25 @@ public class VkTargetJSInterface {
     public void parseAvailableTasks(String tasksHTMLPage) {
         Elements tasksElements = getTasksElements(tasksHTMLPage);
         List<Task> availableTasks = retrieveTasksFromElements(tasksElements);
+
         TasksTypeMapper mapper = TasksTypeMapper
                 .getInstance();
         for(Task taskToGetType: availableTasks) {
             taskToGetType.Type = mapper.MapTaskType(taskToGetType);
-        }
-        this.navigationHost.NavigateTo(new TasksFragment(availableTasks), false);
+            }
+
+        navigationHost.NavigateTo(new TasksFragment(availableTasks), false);
     }
 
     @JavascriptInterface
     public void parseDoneTasks(String tasksHTMLPage) {
         Elements tasksElements = getTasksElements(tasksHTMLPage);
         List<FinishedTask> finishedTasks = retrieveFinishedTasksFromElements(tasksElements);
+        TasksTypeMapper mapper = TasksTypeMapper
+                .getInstance();
+        for(FinishedTask taskToGetType: finishedTasks) {
+            taskToGetType.Type = mapper.MapTaskType(taskToGetType);
+        }
         this.navigationHost.NavigateTo(new FinishedTasksFragment(finishedTasks), false);
     }
 

@@ -5,6 +5,8 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v4.app.Fragment;
+import android.view.Menu;
+import android.view.View;
 
 public class VkTargetApplication extends Application {
     private static Context context;
@@ -43,6 +45,37 @@ public class VkTargetApplication extends Application {
                 .edit();
         preferences.putString("apiKey", apiKey);
         preferences.commit();
+    }
+
+    public static void setLoading() {
+        getCurrentActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                MainActivity.ProgressBar.setVisibility(View.VISIBLE);
+            }
+        });
+
+    }
+    public static void setLoaded() {
+        getCurrentActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                MainActivity.ProgressBar.setVisibility(View.INVISIBLE);
+            }
+        });
+    }
+
+    public static void enableNavigationMenu() {
+        Menu menu = MainActivity.AppNavigationView.getMenu();
+        for(int menuItemIndex = 0; menuItemIndex < menu.size(); menuItemIndex++) {
+            menu.getItem(menuItemIndex).setEnabled(true);
+        }
+    }
+    public static void disableNavigationMenu() {
+        Menu menu = MainActivity.AppNavigationView.getMenu();
+        for(int menuItemIndex = 0; menuItemIndex < menu.size(); menuItemIndex++) {
+            menu.getItem(menuItemIndex).setEnabled(false);
+        }
     }
 
     public static Activity getCurrentActivity() {

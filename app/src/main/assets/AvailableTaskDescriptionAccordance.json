@@ -19,6 +19,10 @@
     {
       "availableTaskDescription": "Добавить в друзья",
       "taskTypeDescription": "Добавить в друзья"
+    },
+    {
+      "availableTaskDescription": "Расскажите о группе",
+      "taskTypeDescription": "Рассказать о группе"
     }
   ]
 }

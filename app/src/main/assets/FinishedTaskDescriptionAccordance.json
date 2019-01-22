@@ -5,11 +5,20 @@
       "taskTypeDescription": "Поставить лайк"
     },
     {
+      "finishedTaskDescription":"Поставить лайк",
+      "taskTypeDescription": "Поставить лайк"
+    },
+    {
       "finishedTaskDescription": "Вступить в сообщество",
       "taskTypeDescription": "Вступление в сообщество"
     },
     {
-      "finishedTaskDescription": ""
+      "finishedTaskDescription": "Добавить в друзья",
+      "taskTypeDescription": "Добавить в друзья"
+    },
+    {
+      "finishedTaskDescription":"Рассказать о группе",
+      "taskTypeDescription": "Рассказать о группе"
     }
   ]
 }

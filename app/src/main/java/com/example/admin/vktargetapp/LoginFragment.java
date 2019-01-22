@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.chip.Chip;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
@@ -24,7 +25,7 @@ public class LoginFragment extends Fragment {
     TextInputEditText passwordInput;
     Session session;
     TextView userEmailInHeader;
-    TextView errorMessageView;
+    Chip errorMessageView;
     MainActivity mainActivity;
     View view;
 
@@ -33,17 +34,20 @@ public class LoginFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.login_fragment, container, false);
         this.view = view;
+
         emailInput = view.findViewById(R.id.emailInput);
         passwordInput = view.findViewById(R.id.passwordInput);
 
         errorMessageView = view.findViewById(R.id.errorMessage);
         VkTargetApplication.setCurrentFragment(this);
+        VkTargetApplication.disableNavigationMenu();
        // session = new Session(VkTargetApplication.getAppContext());
 
         final Button loginButton = view.findViewById(R.id.login_button);
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                VkTargetApplication.setLoading();
                 mainActivity = (MainActivity) VkTargetApplication
                         .getCurrentActivity();
                 userEmailInHeader = mainActivity
@@ -59,19 +63,14 @@ public class LoginFragment extends Fragment {
                 VkTargetWebCrawler.getInstance().RetrieveApiKey(email, password);
             }
         });
-
+        VkTargetApplication.setLoaded();
         return view;
     }
 
-    public void ShowWrongCredentialsMessage(int number) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(VkTargetApplication.getCurrentActivity());
-        builder.setMessage("show wrong creds" + number)
-                .show();
-        this.errorMessageView.setWidth(250);
-        this.errorMessageView.setHeight(80);
+    public void ShowWrongCredentialsMessage() {
+            this.errorMessageView.setVisibility(View.VISIBLE);
     }
     private void hideErrorMEssage(){
-        this.errorMessageView.setWidth(0);
-        this.errorMessageView.setHeight(0);
+        this.errorMessageView.setVisibility(View.INVISIBLE);
     }
 }

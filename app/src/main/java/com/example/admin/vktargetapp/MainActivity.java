@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,12 +31,13 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements NavigationHost {
     public SharedPreferences preferences;
     private DrawerLayout appNavigationDrawer;
-    private NavigationView appNavigationView;
     private Toolbar appToolbar;
     private Session session;
     private TextView userEmailView;
 
+    public static ProgressBar ProgressBar;
     public static WebView WebCrawlerView;
+    public static NavigationView AppNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,12 +45,15 @@ public class MainActivity extends AppCompatActivity implements NavigationHost {
         setContentView(R.layout.activity_main);
 
         WebCrawlerView = findViewById(R.id.webCrawlerView);
+
         VkTargetApplication.setCurrentActivity(this);
+        ProgressBar = findViewById(R.id.progressBar);
+        ProgressBar.setVisibility(View.VISIBLE);
         appNavigationDrawer = findViewById(R.id.drawer_layout);
-        appNavigationView = findViewById(R.id.nav_view);
+        AppNavigationView = findViewById(R.id.nav_view);
         appToolbar = findViewById(R.id.main_toolbar);
         preferences = getSharedPreferences(Constants.PREFERENCES_NAME, MODE_PRIVATE);
-        View navigation = appNavigationView.getHeaderView(0);
+        View navigation = AppNavigationView.getHeaderView(0);
         userEmailView = navigation.findViewById(R.id.userEmail);
         String currentUserEmail = preferences.getString("email", "");
         userEmailView.setText(currentUserEmail != null ? currentUserEmail : "");
@@ -59,8 +64,7 @@ public class MainActivity extends AppCompatActivity implements NavigationHost {
         final ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
-
-        appNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+        AppNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 menuItem.setChecked(true);

@@ -80,7 +80,7 @@ public class VkTargetWebCrawler {
                                         " }())");
                         webView.loadUrl(
                                 "javascript:setTimeout(" +
-                                        "function(){ HtmlViewer.setApiKey(document.getElementsByClassName('vkt-panel__user-data').length, ''+document.getElementsByClassName('key__value')[0].value+'') },400)");
+                                        "function(){ HtmlViewer.setApiKey(document.getElementsByClassName('vkt-panel__user-data').length, ''+document.getElementsByClassName('key__value')[0].value+'') },800)");
                     }
                 });
                 webView.loadUrl(Constants.VkTargetUrl + Constants.ApiPageUrl);

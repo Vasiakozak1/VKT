@@ -33,6 +33,7 @@ public class TasksFragment extends Fragment {
         retrieveTasksHandler = new TimerTask() {
             @Override
             public void run() {
+                VkTargetApplication.setLoading();
                 VkTargetWebCrawler
                         .getInstance()
                         .RetrieveTasks();
@@ -46,6 +47,7 @@ public class TasksFragment extends Fragment {
         retrieveTasksHandler = new TimerTask() {
             @Override
             public void run() {
+                VkTargetApplication.setLoading();
                 VkTargetWebCrawler
                         .getInstance()
                         .RetrieveTasks();
@@ -68,6 +70,7 @@ public class TasksFragment extends Fragment {
         TextView noTsksTextView = this.tasksView.findViewById(R.id.noTasksTextView);
         noTsksTextView.setVisibility(View.VISIBLE);
         if(tasks == null) {
+            VkTargetApplication.setLoading();
             VkTargetWebCrawler
                     .getInstance()
                     .RetrieveTasks();
@@ -89,6 +92,7 @@ public class TasksFragment extends Fragment {
                 noTsksTextView.setVisibility(View.VISIBLE);
             }
             timer.schedule(this.retrieveTasksHandler, 10000);
+            VkTargetApplication.setLoaded();
         }
         return this.tasksView;
     }

@@ -2,6 +2,7 @@ package com.example.admin.vktargetapp;
 
 import android.app.AlertDialog;
 
+import com.example.admin.vktargetapp.com.example.admin.vktargetapp.models.FinishedTask;
 import com.example.admin.vktargetapp.com.example.admin.vktargetapp.models.Task;
 import com.example.admin.vktargetapp.com.example.admin.vktargetapp.models.TaskDescriptionAccordance;
 import com.example.admin.vktargetapp.com.example.admin.vktargetapp.models.TaskType;
@@ -54,11 +55,23 @@ public class TasksTypeMapper {
                 break;
                 //TODO implement task type mapping for other social networks
         }
-        String currentTaskFullDescription = task.Description + " " + task.LinkText;
+
+        String currentTaskFullDescription;
+        List<TaskDescriptionAccordance> accordances;
+        if(task instanceof FinishedTask) {
+            accordances = finishedTasksDescriptionAccordances;
+            currentTaskFullDescription = task.Description;
+        }
+        else {
+            accordances = availableTasksDescriptionAccordances;
+            currentTaskFullDescription = task.Description + " " + task.LinkText;
+        }
+
+
         for(TaskType taskType: taskTypes) {
             if(taskType.getTaskDescription().contains(taskSiteName)) {
-                for(TaskDescriptionAccordance descriptionAccordance: availableTasksDescriptionAccordances) {
 
+                for(TaskDescriptionAccordance descriptionAccordance: accordances) {
                     if(currentTaskFullDescription.equals(descriptionAccordance.AvailableTaskDescription)
                             && taskType.getTaskDescription().contains(descriptionAccordance.TaskTypeDescription)) {
                         return taskType.getTaskType();
@@ -67,14 +80,13 @@ public class TasksTypeMapper {
                 }
             }
         }
-        AlertDialog.Builder builder = new AlertDialog.Builder(VkTargetApplication.getCurrentActivity());
-
         return 0;
     }
 
     private void initMapper() {
         retrieveTaskTypes();
         readAvailableTasksDescriptionAccordance();
+        readFinishedTasksDescriptionAccordance();
     }
 
     private void retrieveTaskTypes() {
@@ -114,9 +126,32 @@ public class TasksTypeMapper {
             }
         }
         catch (JSONException exc) {
-
+            AlertDialog.Builder builder = new AlertDialog.Builder(VkTargetApplication.getCurrentActivity());
+            builder.setTitle("Помилка");
+            builder.setMessage("Виникла помилка при отриманні типу завдання:\n" + exc.getMessage());
+            builder.show();
         }
+    }
 
+    private void readFinishedTasksDescriptionAccordance() {
+        try {
+            finishedTasksDescriptionAccordances = new ArrayList<>();
+            JSONObject rootObject = getRootOjectFromFile("FinishedTaskDescriptionAccordance.json");
+            JSONArray accordancesArray = rootObject.getJSONArray("tasksDescriptionAccordances");
+            for(int accordanceIndex = 0; accordanceIndex < accordancesArray.length(); accordanceIndex++) {
+                JSONObject accordance = accordancesArray.getJSONObject(accordanceIndex);
+                String availableTaskDescription = accordance.getString("finishedTaskDescription");
+                String taskTypeDescription = accordance.getString("taskTypeDescription");
+                finishedTasksDescriptionAccordances
+                        .add(new TaskDescriptionAccordance(availableTaskDescription, taskTypeDescription));
+            }
+        }
+        catch (JSONException exc) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(VkTargetApplication.getCurrentActivity());
+            builder.setTitle("Помилка");
+            builder.setMessage("Виникла помилка при отриманні типу завдання:\n" + exc.getMessage());
+            builder.show();
+        }
     }
 
     private JSONObject getRootOjectFromFile(String fileName) {

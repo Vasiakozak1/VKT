@@ -34,6 +34,7 @@ public class FinishedTasksFragment extends Fragment {
         //View view = super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_finished_tasks, container, false);
         if(finishedTasks == null) {
+            VkTargetApplication.setLoading();
             VkTargetWebCrawler
                     .getInstance()
                     .RetrieveFinishedTasks();
@@ -56,6 +57,7 @@ public class FinishedTasksFragment extends Fragment {
             {
                 noTasksTextView.setVisibility(View.VISIBLE);
             }
+            VkTargetApplication.setLoaded();
         }
         return view;
     }
