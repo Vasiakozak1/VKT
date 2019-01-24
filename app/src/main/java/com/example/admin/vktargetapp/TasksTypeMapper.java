@@ -26,6 +26,8 @@ public class TasksTypeMapper {
     private final String vkKeyWord = "Вконтакте";
     private final String fbKeyWord = "Facebook";
     private final String youtubeKeyWord = "youtube";
+    private final String twitterKeyWord = "twitter";
+    private final String govnoklassnikiKeyWord = "Одноклассниках";
     private static TasksTypeMapper instance;
     private TaskType[] taskTypes;
     private List<TaskDescriptionAccordance> availableTasksDescriptionAccordances;
@@ -52,6 +54,12 @@ public class TasksTypeMapper {
                 break;
             case R.drawable.youtube:
                 taskSiteName = youtubeKeyWord;
+                break;
+            case R.drawable.twitter_box:
+                taskSiteName = twitterKeyWord;
+                break;
+            case R.drawable.odnoklassniki:
+                taskSiteName = govnoklassnikiKeyWord;
                 break;
                 //TODO implement task type mapping for other social networks
         }

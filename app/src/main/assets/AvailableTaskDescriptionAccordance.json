@@ -23,6 +23,38 @@
     {
       "availableTaskDescription": "Расскажите о группе",
       "taskTypeDescription": "Рассказать о группе"
+    },
+    {
+      "availableTaskDescription": "Подпишитесь на канал",
+      "taskTypeDescription": "Подписаться на канал"
+    },
+    {
+      "availableTaskDescription": "Поставьте 'Лайк' под видео",
+      "taskTypeDescription": "Поставить \"Нравится\" под видео"
+    },
+    {
+      "availableTaskDescription":"Поставить 'Лайк' на комментарий комментарий",
+      "taskTypeDescription": "Поставить \"Нравится\" на комментарий"
+    },
+    {
+      "availableTaskDescription": "Подпишитесь на аккаунт",
+      "taskTypeDescription": "Подписаться на страницу"
+    },
+    {
+      "availableTaskDescription": "Поставить лайк на твит твит",
+      "taskTypeDescription": "Лайкнуть твит"
+    },
+    {
+      "availableTaskDescription": "Ретвитните запись",
+      "taskTypeDescription": "Ретвитнуть твит"
+    },
+    {
+      "availableTaskDescription": "Вступить в группу",
+      "taskTypeDescription": "Вступить в группу"
+    },
+    {
+      "availableTaskDescription": "Поставьте класс под записью",
+      "taskTypeDescription": "Поставить \"класс\""
     }
   ]
 }

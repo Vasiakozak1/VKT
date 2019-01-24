@@ -19,6 +19,30 @@
     {
       "finishedTaskDescription":"Рассказать о группе",
       "taskTypeDescription": "Рассказать о группе"
+    },
+    {
+      "finishedTaskDescription": "Ретвитнуть",
+      "taskTypeDescription": "Ретвитнуть твит"
+    },
+    {
+      "finishedTaskDescription": "Поставить 'Лайк' на комментарий",
+      "taskTypeDescription": "Поставить \"Нравится\" на комментарий"
+    },
+    {
+      "finishedTaskDescription": "Поставить 'Лайк'",
+      "taskTypeDescription": "Поставить \"Нравится\" под видео"
+    },
+    {
+      "finishedTaskDescription": "Подписаться",
+      "taskTypeDescription": "Подписаться на страницу"
+    },
+    {
+      "finishedTaskDescription": "Подписаться",
+      "taskTypeDescription": "Подписаться на канал"
+    },
+    {
+      "finishedTaskDescription": "Вступить в группу",
+      "taskTypeDescription": "Вступить в группу"
     }
   ]
 }
