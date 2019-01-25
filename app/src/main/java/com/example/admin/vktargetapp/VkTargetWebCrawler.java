@@ -18,6 +18,8 @@ public class VkTargetWebCrawler {
             "document.getElementsByClassName('login')[2].click();";
     private final String clickShowFinishedTasksButtonCode =
             "document.getElementsByClassName('good')[%d].click()";
+    private final String setApiKeyCode = "javascript:setTimeout(" +
+            "function(){ HtmlViewer.setApiKey(document.getElementsByClassName('vkt-panel__user-data').length, ''+document.getElementsByClassName('key__value')[0].parentNode.parentElement.outerHTML+'', ''+document.getElementsByClassName('key__value')[0].value+'') },800)";
     private final String retrieveApiKeyFunctionParameters =
             "" +
                     "";
@@ -78,12 +80,23 @@ public class VkTargetWebCrawler {
                                         String.format(enterPasswordCode, password) +
                                         clickLoginBtnCode +
                                         " }())");
-                        webView.loadUrl(
-                                "javascript:setTimeout(" +
-                                        "function(){ HtmlViewer.setApiKey(document.getElementsByClassName('vkt-panel__user-data').length, ''+document.getElementsByClassName('key__value')[0].value+'') },800)");
+                        webView.loadUrl(setApiKeyCode);
                     }
                 });
                 webView.loadUrl(Constants.VkTargetUrl + Constants.ApiPageUrl);
+            }
+        });
+    }
+
+    public void GenerateApiKey() {
+        webView.post(new Runnable() {
+            @Override
+            public void run() {
+                webView.loadUrl(
+                        "javascript: document.getElementById('new_key_btn').click()"
+                );
+                webView.reload();
+                webView.loadUrl(setApiKeyCode);
             }
         });
     }

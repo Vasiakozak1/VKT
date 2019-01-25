@@ -23,13 +23,13 @@ import java.util.List;
 public class VkTargetJSInterface {
     private final String taskItemClass = "vkt-content__list-item";
     private final String tipElementId = "tip";
+    private final String noApiKeyLabel = "У вас отсутствует API Key";
 
     private final int COUNT_OF_NOT_LOGGED_IN_USER_ELEMENTS = 1;
     private final int COUNT_OF_LOGGED_IN_USER_ELEMENTS = 2;
 
     private Context context;
     private NavigationHost navigationHost;
-    private int setApiKeyTriggerCount = 0;
 
     public  VkTargetJSInterface(Context context){
         this.context = context;
@@ -37,9 +37,8 @@ public class VkTargetJSInterface {
     }
 
     @JavascriptInterface
-    public void setApiKey(final int countOfLoggedInElements,final String apiKey){
+    public void setApiKey(final int countOfLoggedInElements,final String apikeyHtmlSection, final String apiKey){
         // This method runs two times instead of one
-        setApiKeyTriggerCount++;
         VkTargetApplication.getCurrentActivity()
                 .runOnUiThread(new Runnable() {
                     @Override
@@ -48,7 +47,14 @@ public class VkTargetJSInterface {
                             LoginFragment loginFragment =(LoginFragment) VkTargetApplication.getCurrentFragment();
                             loginFragment.ShowWrongCredentialsMessage();
                         }
-
+                        Element apiKeyDocumentSection = Jsoup.parse(apikeyHtmlSection);
+                        if(apiKeyDocumentSection.text().contains(noApiKeyLabel)) {
+                            VkTargetWebCrawler
+                                    .getInstance()
+                                    .GenerateApiKey();
+                            return;
+                        }
+                        //String apiKey = apiKeyElement.attr("value");
                         if(apiKey == null || apiKey.isEmpty()) {
                             VkTargetApplication.setLoaded();
                             return;
