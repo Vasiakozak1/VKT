@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
+import android.os.Looper;
 import android.webkit.JavascriptInterface;
 import android.widget.Toast;
 
@@ -21,15 +22,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VkTargetJSInterface {
-    private final String taskItemClass = "vkt-content__list-item";
-    private final String tipElementId = "tip";
+    private final String taskItemClass = "row tb__row ";
+    private final String lastTaskItemClass = "row tb__row last";
     private final String noApiKeyLabel = "У вас отсутствует API Key";
 
-    private final int COUNT_OF_NOT_LOGGED_IN_USER_ELEMENTS = 1;
-    private final int COUNT_OF_LOGGED_IN_USER_ELEMENTS = 2;
+    private final int COUNT_OF_NOT_LOGGED_IN_USER_ELEMENTS = 0;
+    private final int COUNT_OF_LOGGED_IN_USER_ELEMENTS = 1;
 
     private Context context;
     private NavigationHost navigationHost;
+    private int countOfTryingToCheckTask = 0;
 
     public  VkTargetJSInterface(Context context){
         this.context = context;
@@ -83,10 +85,10 @@ public class VkTargetJSInterface {
 
     @JavascriptInterface
     public void setLoginNeeded(int countOfLoggedOnUserElements) {
-        if(countOfLoggedOnUserElements >= COUNT_OF_LOGGED_IN_USER_ELEMENTS) {
+        if(countOfLoggedOnUserElements == COUNT_OF_LOGGED_IN_USER_ELEMENTS) {
             Session.NeedsLogin = NeedsLogin.No;
         }
-        else if(countOfLoggedOnUserElements <= COUNT_OF_NOT_LOGGED_IN_USER_ELEMENTS) {
+        else if(countOfLoggedOnUserElements == COUNT_OF_NOT_LOGGED_IN_USER_ELEMENTS) {
             Session.NeedsLogin = NeedsLogin.Yes;
         }
         final Activity currentActivity = VkTargetApplication.getCurrentActivity();
@@ -106,22 +108,23 @@ public class VkTargetJSInterface {
     }
 
     @JavascriptInterface
-    public void parseAvailableTasks(String tasksHTMLPage) {
-        Elements tasksElements = getTasksElements(tasksHTMLPage);
-        List<Task> availableTasks = retrieveTasksFromElements(tasksElements);
+    public void parseAvailableTasks(final String tasksHTMLPage) {
+
+        Elements tasksElements = getTasksElements(tasksHTMLPage, false);
+        final List<Task> availableTasks = retrieveTasksFromElements(tasksElements);
 
         TasksTypeMapper mapper = TasksTypeMapper
                 .getInstance();
         for(Task taskToGetType: availableTasks) {
             taskToGetType.Type = mapper.MapTaskType(taskToGetType);
-            }
-
+        }
         navigationHost.NavigateTo(new TasksFragment(availableTasks), false);
     }
 
     @JavascriptInterface
     public void parseDoneTasks(String tasksHTMLPage) {
-        Elements tasksElements = getTasksElements(tasksHTMLPage);
+        Elements tasksElements = getTasksElements(tasksHTMLPage, true);
+
         List<FinishedTask> finishedTasks = retrieveFinishedTasksFromElements(tasksElements);
         TasksTypeMapper mapper = TasksTypeMapper
                 .getInstance();
@@ -131,12 +134,36 @@ public class VkTargetJSInterface {
         this.navigationHost.NavigateTo(new FinishedTasksFragment(finishedTasks), false);
     }
 
-    private Elements getTasksElements(String tasksHtmlPage) {
+    public void checkIsTaskDone(int countOfSuccessElements) {
+        countOfTryingToCheckTask++;
+        TasksFragment tasksFragment = (TasksFragment) VkTargetApplication.getCurrentFragment();
+        if(countOfSuccessElements >= 1) {
+            tasksFragment.setTaskIsComleted();
+            return;
+        }
+        if(countOfTryingToCheckTask == 2 && countOfSuccessElements == 0) {
+            tasksFragment.setTaskIsNotCompleted();
+        }
+    }
+
+    private Elements getTasksElements(String tasksHtmlPage, boolean finishedTasks) {
         Document tasksDocument = Jsoup.parse(tasksHtmlPage);
-        Element superfluousTip = tasksDocument.getElementById(tipElementId);
-        Elements tasksElements = tasksDocument.getElementsByClass(taskItemClass);
-        tasksElements.remove(superfluousTip);
-        return tasksElements;
+        Element container;
+        Elements taskElements;
+        if(finishedTasks) {
+            container = tasksDocument.getElementsByClass("container-fluid available__table")
+                    .last();
+            taskElements = container.children();
+        }
+        else {
+            container = tasksDocument.getElementsByClass("container-fluid available__table")
+                    .first();
+            taskElements = container.getElementsByClass(taskItemClass);
+            Element lastTask = container.getElementsByClass(lastTaskItemClass).first();
+            taskElements.add(lastTask);
+        }
+
+        return taskElements;
     }
 
     private List<Task> retrieveTasksFromElements(Elements tasks) {

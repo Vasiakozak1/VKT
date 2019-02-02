@@ -1,6 +1,7 @@
 package com.example.admin.vktargetapp;
 
 import android.support.annotation.NonNull;
+import android.support.design.button.MaterialButton;
 import android.support.design.chip.Chip;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -8,11 +9,15 @@ import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.admin.vktargetapp.com.example.admin.vktargetapp.models.FinishedTask;
 import com.example.admin.vktargetapp.com.example.admin.vktargetapp.models.Task;
+import com.example.admin.vktargetapp.task_executors.ITaskExecutor;
+import com.example.admin.vktargetapp.task_executors.YoutubeTaskExecutor;
 
 import java.util.List;
 
@@ -37,8 +42,8 @@ public class TasksRecyclerViewAdapter  extends RecyclerView.Adapter<TasksRecycle
     }
 
     @Override
-    public void onBindViewHolder(@NonNull TaskViewHolder taskViewHolder, int i) {
-        Task currentTask;
+    public void onBindViewHolder(@NonNull final TaskViewHolder taskViewHolder, final int i) {
+        final Task currentTask;
         if(this.showFinishedTasks) {
             currentTask = this.finishedTasks.get(i);
             String finishedAt = VkTargetApplication
@@ -47,6 +52,8 @@ public class TasksRecyclerViewAdapter  extends RecyclerView.Adapter<TasksRecycle
                     .getString(R.string.finished_at);
             taskViewHolder.finishDate.setText(finishedAt + " " + ((FinishedTask) currentTask).FinishedDate);
             taskViewHolder.finishDate.setVisibility(View.VISIBLE);
+            taskViewHolder.checkTaskButton.setVisibility(View.INVISIBLE);
+            taskViewHolder.completeTaskButton.setVisibility(View.INVISIBLE);
         }
         else {
             currentTask = this.tasks.get(i);
@@ -60,6 +67,23 @@ public class TasksRecyclerViewAdapter  extends RecyclerView.Adapter<TasksRecycle
         taskViewHolder.price.setText(String.valueOf(currentTask.Price) + " за виконання");
         taskViewHolder.price.setChipIconResource(R.drawable.currency_rub);
         taskViewHolder.type.setText("Тип: " + currentTask.Type);
+        taskViewHolder.checkTaskButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TasksFragment tasksFragment = (TasksFragment) VkTargetApplication.getCurrentFragment();
+                tasksFragment.setButtonForTaskChecking(taskViewHolder.checkTaskButton);
+                VkTargetWebCrawler.getInstance()
+                        .CheckTask(currentTask.LinkUrl, i);
+            }
+        });
+        taskViewHolder.completeTaskButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                WebView webView =((IWebViewCreator) VkTargetApplication.getCurrentFragment()).CreateWebView();
+                ITaskExecutor taskExecutor = new YoutubeTaskExecutor(webView);
+                taskExecutor.ExecuteTask(currentTask.Type, currentTask.LinkUrl);
+            }
+        });
     }
 
     @NonNull
@@ -79,6 +103,8 @@ public class TasksRecyclerViewAdapter  extends RecyclerView.Adapter<TasksRecycle
         protected Chip price;
         protected TextView finishDate;
         protected TextView type;
+        protected Button checkTaskButton;
+        protected Button completeTaskButton;
 
         public TaskViewHolder(View view) {
             super(view);
@@ -88,6 +114,8 @@ public class TasksRecyclerViewAdapter  extends RecyclerView.Adapter<TasksRecycle
             price = view.findViewById(R.id.taskPrice);
             finishDate = view.findViewById(R.id.taskFinishDate);
             type = view.findViewById(R.id.taskType);
+            checkTaskButton = view.findViewById(R.id.checkTaskBtn);
+            completeTaskButton = view.findViewById(R.id.completeTaskBtn);
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.example.admin.vktargetapp;
 
+import android.app.AlertDialog;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -10,21 +11,32 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.app.Fragment;
+import android.webkit.CookieManager;
+import android.webkit.WebView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.admin.vktargetapp.com.example.admin.vktargetapp.models.Task;
+import com.example.admin.vktargetapp.task_executors.ITaskExecutor;
+import com.example.admin.vktargetapp.task_executors.YoutubeTaskExecutor;
 
 import java.util.List;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class TasksFragment extends Fragment {
+public class TasksFragment extends Fragment implements IWebViewCreator {
+    private static View SavedView;
     private Timer timer;
     private TimerTask retrieveTasksHandler;
     private View tasksView;
     private TasksTypeMapper tasksTypeMapper;
+    private LinearLayout tasksLayout;
+    private Button buttonOfTaskToCheck;
+
 
     private OnFragmentInteractionListener mListener;
     private List<Task> tasks;
@@ -40,10 +52,12 @@ public class TasksFragment extends Fragment {
             }
         };
         timer = new Timer();
+        VkTargetApplication.setCurrentFragment(this);
     }
 
     public TasksFragment(List<Task> tasks) {
         this.tasks = tasks;
+        VkTargetApplication.setCurrentFragment(this);
         retrieveTasksHandler = new TimerTask() {
             @Override
             public void run() {
@@ -56,6 +70,20 @@ public class TasksFragment extends Fragment {
         timer = new Timer();
     }
 
+    public void UpdateTasks(List<Task> newTasks){
+        RecyclerView tasksList = this.tasksView.findViewById(R.id.tasksCardRecyclerView);
+        //tasksList.setHasFixedSize(true);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this.tasksView.getContext());
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        tasksList.setLayoutManager(layoutManager);
+
+        TasksRecyclerViewAdapter tasksAdapter = new TasksRecyclerViewAdapter(newTasks);
+        tasksList.setAdapter(tasksAdapter);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this.tasksView.getContext());
+        builder.setMessage("adapter set");
+        builder.show();
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,23 +92,30 @@ public class TasksFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        this.tasksView = inflater.inflate(R.layout.fragment_tasks, container, false);
-        VkTargetApplication.setCurrentFragment(this);
+        if(SavedView == null) {
+            this.tasksView = inflater.inflate(R.layout.fragment_tasks, container, false);
+            SavedView = this.tasksView;
+        }
+        else {
+            this.tasksView = SavedView;
+        }
+
         tasksTypeMapper = TasksTypeMapper.getInstance();
         TextView noTsksTextView = this.tasksView.findViewById(R.id.noTasksTextView);
+
         noTsksTextView.setVisibility(View.VISIBLE);
         if(tasks == null) {
             VkTargetApplication.setLoading();
             VkTargetWebCrawler
                     .getInstance()
-                    .RetrieveTasks();
+                          .RetrieveTasks();
         }
         else {
             checkMenuItem();
             if(tasks.size() > 0) {
                 noTsksTextView.setVisibility(View.INVISIBLE);
                 RecyclerView tasksList = this.tasksView.findViewById(R.id.tasksCardRecyclerView);
-                tasksList.setHasFixedSize(true);
+                //tasksList.setHasFixedSize(true);
                 LinearLayoutManager layoutManager = new LinearLayoutManager(this.tasksView.getContext());
                 layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
                 tasksList.setLayoutManager(layoutManager);
@@ -91,10 +126,36 @@ public class TasksFragment extends Fragment {
             else {
                 noTsksTextView.setVisibility(View.VISIBLE);
             }
-            timer.schedule(this.retrieveTasksHandler, 10000);
+
+
             VkTargetApplication.setLoaded();
         }
+        timer.schedule(this.retrieveTasksHandler, 10000);
+        Button testBtn = this.tasksView.findViewById(R.id.testBtn);
+        final IWebViewCreator webViewCreator = this;
+        testBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                WebView webView = webViewCreator.CreateWebView();
+                ITaskExecutor taskExecutor = new YoutubeTaskExecutor(webView);
+                taskExecutor.ExecuteTask(23, "https://www.youtube.com/channel/UCvMdj6d6tVf0r4jejiO3ulw");
+            }
+        });
         return this.tasksView;
+    }
+
+    @Override
+    public WebView CreateWebView() {
+        tasksLayout = this.tasksView.findViewById(R.id.tasksLayout);
+        WebView webView = new WebView(this.tasksView.getContext());
+
+        Random random = new Random();
+        int randomId = random.nextInt();
+        webView.setId(randomId);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(1000,1000);
+        webView.setLayoutParams(layoutParams);
+        this.tasksLayout.addView(webView,1);
+        return webView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -102,6 +163,18 @@ public class TasksFragment extends Fragment {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
+    }
+
+    public void setButtonForTaskChecking(Button button) {
+        this.buttonOfTaskToCheck = button;
+    }
+
+    public void setTaskIsComleted() {
+        this.buttonOfTaskToCheck.setBackgroundColor(getResources().getColor(R.color.finishedTaskButtonColor));
+        this.buttonOfTaskToCheck.setText("Task is completed");
+    }
+    public void setTaskIsNotCompleted() {
+        this.buttonOfTaskToCheck.setText("Task is not completed");
     }
 
     @Override

@@ -8,7 +8,7 @@ import org.jsoup.nodes.Element;
 
 public class TaskBuilder {
     private final String iconClass = "fa";
-    private final String youtubeIconClass = "fa fa-youtube";
+    private final String youtubeIconClass = "social__img youtube";
     private final String twitterIconClass = "fa fa-twitter";
     private final String vkIconClass = "fa fa-vk";
     private final String googleplusIconClass = "fa fa-google-plus";
@@ -32,7 +32,7 @@ public class TaskBuilder {
 
     public TaskBuilder addTaskIconResuourceId() {
         String iconclass = taskElement.child(0)
-                .getElementsByClass(iconClass)
+                .getElementsByClass("social__col")
                 .attr("class");
         switch (iconclass) {
             case youtubeIconClass:
@@ -55,23 +55,29 @@ public class TaskBuilder {
     }
 
     public TaskBuilder addDescription(){
-        Element taskDataElement = taskElement.getElementsByClass(taskItemDataClass)
-                .first();
-        Element taskInfoElement = taskElement.select("p").first();
-        this.taskDescription = new String(taskInfoElement.ownText());
-        Element linkElement = taskInfoElement.selectFirst("a[data-bind='url']");
-        this.taskLinkText = linkElement.text();
-        this.taskLinkUrl = linkElement.attr("href");
-
-        Element taskPriceElement = taskDataElement.getElementsByClass(taskPriceClass)
+        String taskPriceText = taskElement.child(1)
+                .getElementsByTag("span")
                 .first()
-                .selectFirst("span");
-        this.taskPrice = Double.parseDouble(taskPriceElement.text());
+                .text();
+        this.taskPrice = Double.parseDouble(taskPriceText);
+        Element wrapElementForDescription = taskElement.child(2)
+                .child(0);
+        taskDescription = wrapElementForDescription.getElementsByTag("span")
+                .first()
+                .text();
+        taskLinkUrl = wrapElementForDescription.getElementsByTag("a")
+                .first()
+                .attr("href");
+        taskLinkText = wrapElementForDescription.getElementsByTag("a")
+                .first()
+                .text();
+
+
         return this;
     }
 
     public TaskBuilder addFInishDate() {
-        Element finishedDateElement = taskElement.selectFirst("div[data-bind='date']");
+        Element finishedDateElement = taskElement.selectFirst("span[data-bind='date']");
         this.finishingDate = finishedDateElement.text();
         return this;
     }

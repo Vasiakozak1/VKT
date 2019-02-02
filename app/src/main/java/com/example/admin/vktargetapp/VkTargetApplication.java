@@ -78,6 +78,22 @@ public class VkTargetApplication extends Application {
         }
     }
 
+    public static void saveIsLoggedInService(String serviceName, String userName) {
+        SharedPreferences.Editor preferences = VkTargetApplication
+                .getCurrentActivity()
+                .getSharedPreferences(Constants.PREFERENCES_NAME, MODE_PRIVATE)
+                .edit();
+        preferences.putString(serviceName, userName);
+        preferences.commit();
+    }
+
+    public static String getLoggedInUserNameInService(String serviceName) {
+        SharedPreferences preferences = VkTargetApplication
+                .getCurrentActivity()
+                .getSharedPreferences(Constants.PREFERENCES_NAME, MODE_PRIVATE);
+        return preferences.getString(serviceName, "");
+    }
+
     public static Activity getCurrentActivity() {
         return VkTargetApplication.currentActivity;
     }

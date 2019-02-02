@@ -4,25 +4,50 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:id="@+id/loginLayout"
         android:layout_marginTop="5dp">
-    <TextView
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/no_tasks"
-        android:id="@+id/noTasksTextView"
-        android:visibility="invisible"
-        android:textSize="30dp"
-        android:textAlignment="center"
-        android:gravity="center"
-        android:includeFontPadding="false"/>
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tasksLayout"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/no_tasks"
+                android:id="@+id/noTasksTextView"
+                android:visibility="invisible"
+                android:textSize="30dp"
+                android:textAlignment="center"
+                android:gravity="center"
+                android:includeFontPadding="false"/>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/testBtn"
+                android:text="Test"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/tasksCardRecyclerView"
+                    android:scrollbars="vertical"
+                    android:layout_marginTop="170dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/tasksCardRecyclerView"
-        android:scrollbars="vertical"
-        android:layout_marginTop="-70dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+                </android.support.v7.widget.RecyclerView>
+            </LinearLayout>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="wefwefwefwef"/>
+        </LinearLayout>
+    </ScrollView>
 
-    </android.support.v7.widget.RecyclerView>
     </LinearLayout>

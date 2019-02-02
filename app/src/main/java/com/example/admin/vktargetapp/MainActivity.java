@@ -17,16 +17,22 @@ import android.util.AttributeSet;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.admin.vktargetapp.com.example.admin.vktargetapp.models.Task;
+import com.example.admin.vktargetapp.task_executors.ITaskExecutor;
+import com.example.admin.vktargetapp.task_executors.YoutubeTaskExecutor;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class MainActivity extends AppCompatActivity implements NavigationHost {
     public SharedPreferences preferences;
@@ -52,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements NavigationHost {
         appNavigationDrawer = findViewById(R.id.drawer_layout);
         AppNavigationView = findViewById(R.id.nav_view);
         appToolbar = findViewById(R.id.main_toolbar);
+
         preferences = getSharedPreferences(Constants.PREFERENCES_NAME, MODE_PRIVATE);
         View navigation = AppNavigationView.getHeaderView(0);
         userEmailView = navigation.findViewById(R.id.userEmail);
@@ -85,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements NavigationHost {
                 return true;
             }
         });
+
         try{
             ManageLogin();
         }
@@ -109,19 +117,12 @@ public class MainActivity extends AppCompatActivity implements NavigationHost {
         NavigateTo(new LoginFragment(), false);
     }
 
-    private void ShowTasks() {
-        NavigateTo(new TasksFragment(), false);
-    }
-    private void ShowFinishedTasks() {
-        NavigateTo(new FinishedTasksFragment(), false);
-    }
-
     @Override
     public void NavigateTo(Fragment fragment, boolean addTobackstck) {
         FragmentTransaction transaction =
                 getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.appContainer, fragment);
+                        .beginTransaction()
+                        .replace(R.id.appContainer, fragment);
         if(addTobackstck) {
             transaction.addToBackStack(null);
         }
@@ -155,11 +156,19 @@ public class MainActivity extends AppCompatActivity implements NavigationHost {
                     .CheckIsLoginNeeded();
         }
         else if(Session.NeedsLogin == NeedsLogin.No) {
-           // String currentEmail = session.getCurrentEmail();
-          //  if(currentEmail != null && !currentEmail.equals("")){
-         //       userEmailView.setText(currentEmail);
-         //   }
+            // String currentEmail = session.getCurrentEmail();
+            //  if(currentEmail != null && !currentEmail.equals("")){
+            //       userEmailView.setText(currentEmail);
+            //   }
             ShowTasks();
         }
     }
+
+    private void ShowTasks() {
+        NavigateTo(new TasksFragment(), false);
+    }
+    private void ShowFinishedTasks() {
+        NavigateTo(new FinishedTasksFragment(), false);
+    }
+
 }

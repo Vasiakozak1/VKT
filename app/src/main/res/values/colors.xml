@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#184eb2</color>
     <color name="colorFinishDate">#15bf31</color>
+    <color name="finishedTaskButtonColor">#00ff00</color>
     <color name="errorBackground">#ff3232</color>
     <color name="errorFontColor">#ffffff</color>
 </resources>
