@@ -131,16 +131,6 @@ public class TasksFragment extends Fragment implements IWebViewCreator {
             VkTargetApplication.setLoaded();
         }
         timer.schedule(this.retrieveTasksHandler, 10000);
-        Button testBtn = this.tasksView.findViewById(R.id.testBtn);
-        final IWebViewCreator webViewCreator = this;
-        testBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                WebView webView = webViewCreator.CreateWebView();
-                ITaskExecutor taskExecutor = new YoutubeTaskExecutor(webView);
-                taskExecutor.ExecuteTask(23, "https://www.youtube.com/channel/UCvMdj6d6tVf0r4jejiO3ulw");
-            }
-        });
         return this.tasksView;
     }
 

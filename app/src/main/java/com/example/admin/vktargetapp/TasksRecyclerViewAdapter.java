@@ -70,10 +70,9 @@ public class TasksRecyclerViewAdapter  extends RecyclerView.Adapter<TasksRecycle
         taskViewHolder.checkTaskButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TasksFragment tasksFragment = (TasksFragment) VkTargetApplication.getCurrentFragment();
-                tasksFragment.setButtonForTaskChecking(taskViewHolder.checkTaskButton);
+
                 VkTargetWebCrawler.getInstance()
-                        .CheckTask(currentTask.LinkUrl, i);
+                        .CheckTask(currentTask.LinkUrl, i, taskViewHolder.checkTaskButton);
             }
         });
         taskViewHolder.completeTaskButton.setOnClickListener(new View.OnClickListener() {

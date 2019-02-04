@@ -1,8 +1,10 @@
 package com.example.admin.vktargetapp;
 
+import android.app.AlertDialog;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -41,7 +43,7 @@ public class VkTargetWebCrawler {
             "        checkButton.click();\n" +
             "    }\n" +
             "}";
-    private final String checkIsTaskDoneCode = "setTimeout(function(){ " +
+    private final String checkIsTaskDoneCode = "javascript: setTimeout(function(){ " +
             "HtmlViewer.checkIsTaskDone(document.getElementsByClassName('default__small__btn white check__btn success').length);}, %d)";
 
     private static VkTargetWebCrawler instance = null;
@@ -187,7 +189,7 @@ public class VkTargetWebCrawler {
                     public void onPageFinished(WebView view, String url) {
                         super.onPageFinished(view, url);
                         webView.loadUrl(
-                                "javascript: document.getElementsByClassName('menu__item')[7].click()"
+                                "javascript: document.getElementsByClassName('setting__menu')[0].children[9].click()"
                         );
                     }
                 });
@@ -196,14 +198,43 @@ public class VkTargetWebCrawler {
         });
     }
 
-    public void CheckTask(final String taskHref, final int taskIndex) {
+    public void CheckTask(final String taskHref, final int taskIndex, final Button checkTaskButton) {
         webView.post(new Runnable() {
             @Override
             public void run() {
+                TasksFragment tasksFragment = (TasksFragment) VkTargetApplication.getCurrentFragment();
+                tasksFragment.setButtonForTaskChecking(checkTaskButton);
                 String formattedPushButtonCode = String.format(pushCheckButtonCode, taskHref, taskIndex);
+
+                formattedPushButtonCode = "var taskToCheck;" +
+                        "var tasks = document.getElementsByClassName('row tb__row ')" +
+                        "for(var taskIndex = 0; taskIndex < tasks.length; taskIndex++) {" +
+                        "for(var taskChildrenIndex = 0; taskChildrenIndex < tasks[taskIndex].childElementCount; taskChildrenIndex++)" +
+                        "    {" +
+                        "        var taskChild = tasks[taskIndex].children[taskChildrenIndex];" +
+                        "        if(taskChild.className == 'col-12 col-md link__col flex-middle')" +
+                        "        {" +
+                        "            var link = taskChild.firstElementChild.children[1];" +
+                        "            if(link.getAttribute('href') === '" + taskHref + "' && taskIndex == " + taskIndex + ") {" +
+                        "                taskToCheck = tasks[taskIndex];" +
+                        "            }" +
+                        "        }" +
+                        "    }" +
+                        "}" +
+                        "for(var taskChildrenIndex = 0; taskChildrenIndex < taskToCheck.childElementCount; taskChildrenIndex++){" +
+                        "    var taskChild = taskToCheck.children[taskChildrenIndex];" +
+                        "    if(taskChild.className === 'col-12 col-sm check__col flex-middle ') {" +
+                        "        var checkButton = taskChild.getElementsByTagName('button')[0];" +
+                        "        checkButton.click();" +
+                        "    }" +
+                        "}";
+
                 webView.loadUrl(
-                        "javascript: " + formattedPushButtonCode
+                        "javascript: function(){ " + formattedPushButtonCode + " }()"
                 );
+                AlertDialog.Builder builder = new AlertDialog.Builder(VkTargetApplication.getCurrentActivity());
+                builder.setMessage(formattedPushButtonCode);
+                builder.show();
                 int firstWaitTimeUntilCheckTask = 2500;
                 int secondWaitUntilCheckTask = 4500;
                 String formattedIsTaskDoneCodeFirstTry = String.format(checkIsTaskDoneCode, firstWaitTimeUntilCheckTask);

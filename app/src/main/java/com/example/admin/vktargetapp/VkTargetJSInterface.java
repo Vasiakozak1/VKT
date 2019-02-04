@@ -134,6 +134,7 @@ public class VkTargetJSInterface {
         this.navigationHost.NavigateTo(new FinishedTasksFragment(finishedTasks), false);
     }
 
+    @JavascriptInterface
     public void checkIsTaskDone(int countOfSuccessElements) {
         countOfTryingToCheckTask++;
         TasksFragment tasksFragment = (TasksFragment) VkTargetApplication.getCurrentFragment();
