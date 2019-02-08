@@ -131,6 +131,11 @@ public class VkTargetJSInterface {
         for(FinishedTask taskToGetType: finishedTasks) {
             taskToGetType.Type = mapper.MapTaskType(taskToGetType);
         }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(VkTargetApplication.getCurrentActivity());
+        builder.setMessage("" + finishedTasks.size());
+        builder.show();
+
         this.navigationHost.NavigateTo(new FinishedTasksFragment(finishedTasks), false);
     }
 
@@ -139,10 +144,12 @@ public class VkTargetJSInterface {
         countOfTryingToCheckTask++;
         TasksFragment tasksFragment = (TasksFragment) VkTargetApplication.getCurrentFragment();
         if(countOfSuccessElements >= 1) {
+            countOfTryingToCheckTask = 0;
             tasksFragment.setTaskIsComleted();
             return;
         }
         if(countOfTryingToCheckTask == 2 && countOfSuccessElements == 0) {
+            countOfTryingToCheckTask = 0;
             tasksFragment.setTaskIsNotCompleted();
         }
     }

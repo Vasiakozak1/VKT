@@ -20,9 +20,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.admin.vktargetapp.com.example.admin.vktargetapp.models.Task;
-import com.example.admin.vktargetapp.task_executors.ITaskExecutor;
-import com.example.admin.vktargetapp.task_executors.YoutubeTaskExecutor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Timer;
@@ -52,6 +51,7 @@ public class TasksFragment extends Fragment implements IWebViewCreator {
             }
         };
         timer = new Timer();
+        this.tasks = new ArrayList<>();
         VkTargetApplication.setCurrentFragment(this);
     }
 
@@ -70,20 +70,6 @@ public class TasksFragment extends Fragment implements IWebViewCreator {
         timer = new Timer();
     }
 
-    public void UpdateTasks(List<Task> newTasks){
-        RecyclerView tasksList = this.tasksView.findViewById(R.id.tasksCardRecyclerView);
-        //tasksList.setHasFixedSize(true);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this.tasksView.getContext());
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        tasksList.setLayoutManager(layoutManager);
-
-        TasksRecyclerViewAdapter tasksAdapter = new TasksRecyclerViewAdapter(newTasks);
-        tasksList.setAdapter(tasksAdapter);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this.tasksView.getContext());
-        builder.setMessage("adapter set");
-        builder.show();
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,7 +85,7 @@ public class TasksFragment extends Fragment implements IWebViewCreator {
         else {
             this.tasksView = SavedView;
         }
-
+        timer.schedule(this.retrieveTasksHandler, 10000);
         tasksTypeMapper = TasksTypeMapper.getInstance();
         TextView noTsksTextView = this.tasksView.findViewById(R.id.noTasksTextView);
 
@@ -112,25 +98,23 @@ public class TasksFragment extends Fragment implements IWebViewCreator {
         }
         else {
             checkMenuItem();
+            RecyclerView tasksList = this.tasksView.findViewById(R.id.tasksCardRecyclerView);
+            //tasksList.setHasFixedSize(true);
+            LinearLayoutManager layoutManager = new LinearLayoutManager(this.tasksView.getContext());
+            layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+            tasksList.setLayoutManager(layoutManager);
+
+            TasksRecyclerViewAdapter tasksAdapter = new TasksRecyclerViewAdapter(tasks);
+            tasksList.setAdapter(tasksAdapter);
             if(tasks.size() > 0) {
                 noTsksTextView.setVisibility(View.INVISIBLE);
-                RecyclerView tasksList = this.tasksView.findViewById(R.id.tasksCardRecyclerView);
-                //tasksList.setHasFixedSize(true);
-                LinearLayoutManager layoutManager = new LinearLayoutManager(this.tasksView.getContext());
-                layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-                tasksList.setLayoutManager(layoutManager);
-
-                TasksRecyclerViewAdapter tasksAdapter = new TasksRecyclerViewAdapter(tasks);
-                tasksList.setAdapter(tasksAdapter);
             }
             else {
                 noTsksTextView.setVisibility(View.VISIBLE);
             }
-
-
             VkTargetApplication.setLoaded();
         }
-        timer.schedule(this.retrieveTasksHandler, 10000);
+
         return this.tasksView;
     }
 
@@ -142,7 +126,14 @@ public class TasksFragment extends Fragment implements IWebViewCreator {
         Random random = new Random();
         int randomId = random.nextInt();
         webView.setId(randomId);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(1000,1000);
+        webView.setVerticalScrollBarEnabled(true);
+        webView.clearCache(true);
+        webView.clearHistory();
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
+        webView.addJavascriptInterface(new VkTargetJSInterface
+                (VkTargetApplication.getCurrentActivity()),"HtmlViewer");
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(800,800);
         webView.setLayoutParams(layoutParams);
         this.tasksLayout.addView(webView,1);
         return webView;
@@ -153,10 +144,6 @@ public class TasksFragment extends Fragment implements IWebViewCreator {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
-    }
-
-    public void setButtonForTaskChecking(Button button) {
-        this.buttonOfTaskToCheck = button;
     }
 
     public void setTaskIsComleted() {

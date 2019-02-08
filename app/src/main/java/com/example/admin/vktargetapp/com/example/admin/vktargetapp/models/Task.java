@@ -1,5 +1,10 @@
 package com.example.admin.vktargetapp.com.example.admin.vktargetapp.models;
 
+import android.webkit.WebView;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class Task {
     public String Description;
     public int SiteIconResourceId;
@@ -16,6 +21,6 @@ public class Task {
         SiteIconResourceId = siteIconResourceId;
         Price = price;
         LinkUrl = linkUrl;
-        LinkText =linkText;
+        LinkText = linkText;
     }
 }

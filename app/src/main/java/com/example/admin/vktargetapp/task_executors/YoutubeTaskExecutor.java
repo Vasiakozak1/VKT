@@ -1,14 +1,17 @@
 package com.example.admin.vktargetapp.task_executors;
 
+
 import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.support.design.widget.TextInputEditText;
-import android.webkit.CookieManager;
+import android.os.Handler;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 
 import com.example.admin.vktargetapp.R;
+import com.example.admin.vktargetapp.TaskDataStorage;
+import com.example.admin.vktargetapp.TasksFragment;
 import com.example.admin.vktargetapp.VkTargetApplication;
+
 
 public final class YoutubeTaskExecutor extends BaseTaskExecutor {
     private int taskType;
@@ -23,10 +26,8 @@ public final class YoutubeTaskExecutor extends BaseTaskExecutor {
             "document.getElementById('passwordNext').click()},2100)";
 
     public YoutubeTaskExecutor(WebView webView) {
-        this.webView = webView;
-        this.webView.clearCache(true);
-        this.webView.clearHistory();
-        this.webView.getSettings().setJavaScriptEnabled(true);
+        super(webView);
+        this.siteOfTaskIcon = R.drawable.youtube;
     }
 
     @Override
@@ -85,6 +86,17 @@ public final class YoutubeTaskExecutor extends BaseTaskExecutor {
                         break;
                 }
                 webView.setWebViewClient(new WebViewClient());
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        //Allow checking task
+                        Button button = TaskDataStorage
+                                .getInstance()
+                                .getCheckTaskButton(currentTasktToExecuteUrl, siteOfTaskIcon);
+                        button.setEnabled(true);
+                    }
+                }, 700);
             }
         });
     }
@@ -153,7 +165,6 @@ public final class YoutubeTaskExecutor extends BaseTaskExecutor {
 
             }
         });
-
     }
     private void likeVideo() {
         webView.loadUrl("javascript: setTimeout(function(){ " +

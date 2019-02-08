@@ -8,7 +8,9 @@ import android.view.View;
 import android.webkit.WebView;
 
 import com.example.admin.vktargetapp.R;
+import com.example.admin.vktargetapp.TaskDataStorage;
 import com.example.admin.vktargetapp.VkTargetApplication;
+import com.example.admin.vktargetapp.com.example.admin.vktargetapp.models.TaskData;
 
 public abstract class BaseTaskExecutor implements ITaskExecutor {
     protected WebView webView;
@@ -16,6 +18,14 @@ public abstract class BaseTaskExecutor implements ITaskExecutor {
     protected String currentLoggedInUserEmail;
     protected String tempLogin; // Both of these fields is to call login() method just after logout()
     protected String tempPassword;
+    protected int siteOfTaskIcon;
+
+    public BaseTaskExecutor(WebView webView) {
+        this.webView = webView;
+        this.webView.clearCache(true);
+        this.webView.clearHistory();
+        this.webView.getSettings().setJavaScriptEnabled(true);
+    }
 
     protected abstract void login(String userName, String password);
     protected abstract void logout();
@@ -35,6 +45,12 @@ public abstract class BaseTaskExecutor implements ITaskExecutor {
                     public void onClick(DialogInterface dialog, int which) {
                         String login = loginTextInput.getText().toString();
                         String password = passwordTextInput.getText().toString();
+
+                        TaskDataStorage
+                                .getInstance()
+                                .addWebView(currentTasktToExecuteUrl, siteOfTaskIcon
+                                        , new TaskData(login, webView));
+
                         if(login.equals(currentLoggedInUserEmail)) {
                             webView.loadUrl(currentTasktToExecuteUrl);
                             determineWhatToDoInTask();

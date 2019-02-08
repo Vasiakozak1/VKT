@@ -24,21 +24,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.admin.vktargetapp.com.example.admin.vktargetapp.models.Task;
-import com.example.admin.vktargetapp.task_executors.ITaskExecutor;
-import com.example.admin.vktargetapp.task_executors.YoutubeTaskExecutor;
-
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
+
 
 public class MainActivity extends AppCompatActivity implements NavigationHost {
     public SharedPreferences preferences;
     private DrawerLayout appNavigationDrawer;
     private Toolbar appToolbar;
-    private Session session;
     private TextView userEmailView;
 
     public static ProgressBar ProgressBar;

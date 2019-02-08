@@ -1,11 +1,10 @@
 package com.example.admin.vktargetapp;
 
-import android.app.AlertDialog;
-import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
-import android.widget.Toast;
+
+import com.example.admin.vktargetapp.com.example.admin.vktargetapp.models.TaskData;
 
 import java.io.IOException;
 
@@ -43,6 +42,19 @@ public class VkTargetWebCrawler {
             "        checkButton.click();\n" +
             "    }\n" +
             "}";
+
+    private final String chooseAccountCode = "var chooseAcc = function() {\n" +
+            "    var accountDivs = document.getElementsByTagName('ul')[0].children;\n" +
+            "    for(var accountsIndex = 0; accountsIndex < accountDivs.length; accountsIndex++) {\n" +
+            "        var accountNameElement = accountDivs[accountsIndex].firstChild.firstChild.firstChild.children[1].children[1];\n" +
+            "        var accountName = accountNameElement.innerText;\n" +
+            "        if(accountName === '%s') {\n" +
+            "            accountDivs[accountsIndex].firstChild.click();\n" +
+            "            break;\n" +
+            "        }\n" +
+            "    }\n" +
+            "}\n" +
+            "chooseAcc();";
     private final String checkIsTaskDoneCode = "javascript: setTimeout(function(){ " +
             "HtmlViewer.checkIsTaskDone(document.getElementsByClassName('default__small__btn white check__btn success').length);}, %d)";
 
@@ -198,50 +210,79 @@ public class VkTargetWebCrawler {
         });
     }
 
-    public void CheckTask(final String taskHref, final int taskIndex, final Button checkTaskButton) {
-        webView.post(new Runnable() {
+    public void CheckTask(final String taskHref, final int taskIndex, final TaskData webViewForCheckingTask) {
+
+
+        final String formattedPushButtonCode = "var taskToCheck;" +
+                "var tasks = document.getElementsByClassName('row tb__row ');" +
+                "for(var taskIndex = 0; taskIndex < tasks.length; taskIndex++) { " +
+                "for(var taskChildrenIndex = 0; taskChildrenIndex < tasks[taskIndex].childElementCount; taskChildrenIndex++)" +
+                "    {" +
+                "        var taskChild = tasks[taskIndex].children[taskChildrenIndex];" +
+                "        if(taskChild.className == 'col-12 col-md link__col flex-middle')" +
+                "        {" +
+                "            var link = taskChild.firstElementChild.children[1];" +
+                "            if(link.getAttribute('href') === '" + taskHref + "' && taskIndex == " + taskIndex + ") {" +
+                "                taskToCheck = tasks[taskIndex];" +
+                "            }" +
+                "        }" +
+                "    }" +
+                "}" +
+                "for(var taskChildrenIndex = 0; taskChildrenIndex < taskToCheck.childElementCount; taskChildrenIndex++){" +
+                "    var taskChild = taskToCheck.children[taskChildrenIndex];" +
+                "    if(taskChild.className === 'col-12 col-sm check__col flex-middle ') {" +
+                "        var checkButton = taskChild.getElementsByTagName('button')[0];" +
+                "        checkButton.click();" +
+                "    }" +
+                "}";
+
+        webViewForCheckingTask.webView.post(new Runnable() {
             @Override
             public void run() {
-                TasksFragment tasksFragment = (TasksFragment) VkTargetApplication.getCurrentFragment();
-                tasksFragment.setButtonForTaskChecking(checkTaskButton);
-                String formattedPushButtonCode = String.format(pushCheckButtonCode, taskHref, taskIndex);
 
-                formattedPushButtonCode = "var taskToCheck;" +
-                        "var tasks = document.getElementsByClassName('row tb__row ')" +
-                        "for(var taskIndex = 0; taskIndex < tasks.length; taskIndex++) {" +
-                        "for(var taskChildrenIndex = 0; taskChildrenIndex < tasks[taskIndex].childElementCount; taskChildrenIndex++)" +
-                        "    {" +
-                        "        var taskChild = tasks[taskIndex].children[taskChildrenIndex];" +
-                        "        if(taskChild.className == 'col-12 col-md link__col flex-middle')" +
-                        "        {" +
-                        "            var link = taskChild.firstElementChild.children[1];" +
-                        "            if(link.getAttribute('href') === '" + taskHref + "' && taskIndex == " + taskIndex + ") {" +
-                        "                taskToCheck = tasks[taskIndex];" +
-                        "            }" +
-                        "        }" +
-                        "    }" +
-                        "}" +
-                        "for(var taskChildrenIndex = 0; taskChildrenIndex < taskToCheck.childElementCount; taskChildrenIndex++){" +
-                        "    var taskChild = taskToCheck.children[taskChildrenIndex];" +
-                        "    if(taskChild.className === 'col-12 col-sm check__col flex-middle ') {" +
-                        "        var checkButton = taskChild.getElementsByTagName('button')[0];" +
-                        "        checkButton.click();" +
-                        "    }" +
-                        "}";
+                webViewForCheckingTask.webView.setWebViewClient(new WebViewClient(){
+                    @Override
+                    public void onPageFinished(WebView view, String url) {
+                        super.onPageFinished(view, url);
+                        webView.setWebViewClient(new WebViewClient(){
+                            @Override
+                            public void onPageFinished(WebView view, String url) {
+                                super.onPageFinished(view, url);
+                                webViewForCheckingTask.webView.setWebViewClient(new WebViewClient(){
+                                    @Override
+                                    public void onPageFinished(WebView view, String url) {
+                                        super.onPageFinished(view, url);
+                                        webViewForCheckingTask.webView.setWebViewClient(new WebViewClient());
 
-                webView.loadUrl(
-                        "javascript: function(){ " + formattedPushButtonCode + " }()"
-                );
-                AlertDialog.Builder builder = new AlertDialog.Builder(VkTargetApplication.getCurrentActivity());
-                builder.setMessage(formattedPushButtonCode);
-                builder.show();
-                int firstWaitTimeUntilCheckTask = 2500;
-                int secondWaitUntilCheckTask = 4500;
-                String formattedIsTaskDoneCodeFirstTry = String.format(checkIsTaskDoneCode, firstWaitTimeUntilCheckTask);
-                String formattedIsTaskDoneCodeSecondTry = String.format(checkIsTaskDoneCode, secondWaitUntilCheckTask);
-                webView.loadUrl(formattedIsTaskDoneCodeFirstTry);
-                webView.loadUrl(formattedIsTaskDoneCodeSecondTry);
+
+                                    }
+                                });
+                                String formattedChooseAccountCode = String.format(chooseAccountCode, webViewForCheckingTask.email);
+                                webViewForCheckingTask.webView.loadUrl(
+                                        "javascript: " + formattedChooseAccountCode
+                                );
+                                checkTaskSuccessful(webViewForCheckingTask.webView);
+                            }
+
+                        });
+                        webViewForCheckingTask.webView.loadUrl(
+                                "javascript: var pushBtn = function(){ " + formattedPushButtonCode + " }; pushBtn();"
+                        );
+                        checkTaskSuccessful(webViewForCheckingTask.webView);
+
+                    }
+                });
+                webViewForCheckingTask.webView.loadUrl(Constants.VkTargetUrl + Constants.MyTasksUrl);
             }
         });
+    }
+
+    private void checkTaskSuccessful(WebView webView) {
+        int firstWaitTimeUntilCheckTask = 2500;
+        int secondWaitUntilCheckTask = 4000;
+        String formattedIsTaskDoneCodeFirstTry = String.format(checkIsTaskDoneCode, firstWaitTimeUntilCheckTask);
+        String formattedIsTaskDoneCodeSecondTry = String.format(checkIsTaskDoneCode, secondWaitUntilCheckTask);
+        webView.loadUrl(formattedIsTaskDoneCodeFirstTry);
+        webView.loadUrl(formattedIsTaskDoneCodeSecondTry);
     }
 }

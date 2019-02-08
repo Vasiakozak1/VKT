@@ -1,18 +1,19 @@
 package com.example.admin.vktargetapp;
 
 
+import android.app.AlertDialog;
+
 import com.example.admin.vktargetapp.com.example.admin.vktargetapp.models.FinishedTask;
 import com.example.admin.vktargetapp.com.example.admin.vktargetapp.models.Task;
 import org.jsoup.nodes.Element;
 
 
 public class TaskBuilder {
-    private final String iconClass = "fa";
     private final String youtubeIconClass = "social__img youtube";
-    private final String twitterIconClass = "fa fa-twitter";
-    private final String vkIconClass = "fa fa-vk";
+    private final String twitterIconClass = "social__img twitter";
+    private final String vkIconClass = "social__img vk";
     private final String googleplusIconClass = "fa fa-google-plus";
-    private final String odnoklasnikiIconClass = "fa fa-odnoklassniki";
+    private final String odnoklasnikiIconClass = "social__img odnoklassniki";
 
     private final String taskItemClass = "vkt-content__list-item";
     private final String taskItemDataClass = "vkt-content__list-data";
@@ -31,10 +32,22 @@ public class TaskBuilder {
     }
 
     public TaskBuilder addTaskIconResuourceId() {
-        String iconclass = taskElement.child(0)
-                .getElementsByClass("social__col")
-                .attr("class");
-        switch (iconclass) {
+        String iconClass;
+        if(hasAdditionalWrapper()) {
+            iconClass = taskElement
+                    .child(0)
+                    .child(0)
+                    .child(0)
+                    .attr("class");
+        }
+        else {
+            iconClass = taskElement
+                    .child(0)
+                    .child(0)
+                    .attr("class");
+        }
+
+        switch (iconClass) {
             case youtubeIconClass:
                 taskResourceId = R.drawable.youtube;
                 break;
@@ -87,5 +100,13 @@ public class TaskBuilder {
     }
     public FinishedTask BuildFinishedTask() {
         return new FinishedTask(this.taskDescription, this.taskResourceId, this.taskPrice, this.taskLinkUrl, this.taskLinkText, this.finishingDate);
+    }
+
+    private boolean hasAdditionalWrapper() {
+        String wrapperClass = taskElement
+                .child(0)
+                .child(0)
+                .attr("class");
+        return wrapperClass.equals("inside");
     }
 }

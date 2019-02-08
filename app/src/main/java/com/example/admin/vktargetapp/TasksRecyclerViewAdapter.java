@@ -1,5 +1,6 @@
 package com.example.admin.vktargetapp;
 
+import android.app.AlertDialog;
 import android.support.annotation.NonNull;
 import android.support.design.button.MaterialButton;
 import android.support.design.chip.Chip;
@@ -15,11 +16,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.admin.vktargetapp.com.example.admin.vktargetapp.models.FinishedTask;
+import com.example.admin.vktargetapp.com.example.admin.vktargetapp.models.TaskData;
 import com.example.admin.vktargetapp.com.example.admin.vktargetapp.models.Task;
 import com.example.admin.vktargetapp.task_executors.ITaskExecutor;
 import com.example.admin.vktargetapp.task_executors.YoutubeTaskExecutor;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TasksRecyclerViewAdapter  extends RecyclerView.Adapter<TasksRecyclerViewAdapter.TaskViewHolder>{
 
@@ -67,12 +71,22 @@ public class TasksRecyclerViewAdapter  extends RecyclerView.Adapter<TasksRecycle
         taskViewHolder.price.setText(String.valueOf(currentTask.Price) + " за виконання");
         taskViewHolder.price.setChipIconResource(R.drawable.currency_rub);
         taskViewHolder.type.setText("Тип: " + currentTask.Type);
+
+        TaskDataStorage
+                .getInstance()
+                .addCheckTaskButton(currentTask.LinkUrl, currentTask.SiteIconResourceId, taskViewHolder.checkTaskButton);
         taskViewHolder.checkTaskButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                VkTargetWebCrawler.getInstance()
-                        .CheckTask(currentTask.LinkUrl, i, taskViewHolder.checkTaskButton);
+                TaskData webViewForCheckingTask = TaskDataStorage
+                        .getInstance()
+                        .getWebView(currentTask.LinkUrl, currentTask.SiteIconResourceId);
+                if(webViewForCheckingTask != null) {
+                    webViewForCheckingTask.webView.getSettings().setUserAgentString("Mozilla/5.0 (Linux; Android 4.1.1; Galaxy Nexus Build/JRO03C) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19");
+                    VkTargetWebCrawler.getInstance()
+                            .CheckTask(currentTask.LinkUrl, i, webViewForCheckingTask);
+                }
             }
         });
         taskViewHolder.completeTaskButton.setOnClickListener(new View.OnClickListener() {
@@ -114,6 +128,7 @@ public class TasksRecyclerViewAdapter  extends RecyclerView.Adapter<TasksRecycle
             finishDate = view.findViewById(R.id.taskFinishDate);
             type = view.findViewById(R.id.taskType);
             checkTaskButton = view.findViewById(R.id.checkTaskBtn);
+            checkTaskButton.setEnabled(false);
             completeTaskButton = view.findViewById(R.id.completeTaskBtn);
         }
     }
